@@ -37,7 +37,7 @@ exports.Progress = {
   remove() {
     document.documentElement.classList.remove('nprogress-busy');
     const progress = document.getElementById('nprogress');
-    progress && progress.parentNode && progress.parentNode.removeChild(progress);
+    if (progress && progress.parentNode) progress.parentNode.removeChild(progress);
   },
 
   render(fromStart) {
@@ -60,10 +60,10 @@ exports.Progress = {
     return progress;
   },
 
-  set(n) {
+  set(val) {
     const started = this.isStarted();
 
-    n = Math.min(Math.max(n, 0.08), 1);
+    const n = Math.min(Math.max(val, 0.08), 1);
     this.status = (n === 1 ? null : n);
 
     const progress = this.render(!started);
@@ -71,7 +71,8 @@ exports.Progress = {
     const speed = 200;
     const ease = 'linear';
 
-    progress.offsetWidth; /* Repaint */
+    // eslint-disable-next-line no-unused-expressions
+    progress.offsetWidth; /* Getting this property causes a reflow and repaint (https://www.sitepoint.com/10-ways-minimize-reflows-improve-performance/) */
 
     queue((next) => {
       // Add transition
@@ -82,7 +83,8 @@ exports.Progress = {
         // Fade out
         progress.style.transition = 'none';
         progress.style.opacity = 1;
-        progress.offsetWidth; /* Repaint */
+        // eslint-disable-next-line no-unused-expressions
+        progress.offsetWidth; /* Getting this property causes a reflow and repaint (https://www.sitepoint.com/10-ways-minimize-reflows-improve-performance/) */
 
         setTimeout(() => {
           progress.style.transition = `all ${speed}ms linear`;
@@ -102,18 +104,30 @@ exports.Progress = {
   },
 
   inc(amount) {
-    let n = this.status;
+    const n = this.status;
+    let incAmount = amount;
 
     if (!n) {
       return this.start();
-    } if (n <= 1) {
-      if (typeof amount !== 'number') {
-        if (n >= 0 && n < 0.2) { amount = 0.1; } else if (n >= 0.2 && n < 0.5) { amount = 0.04; } else if (n >= 0.5 && n < 0.8) { amount = 0.02; } else if (n >= 0.8 && n < 0.99) { amount = 0.005; } else { amount = 0; }
+    }
+    if (n <= 1) {
+      if (typeof incAmount !== 'number') {
+        if (n >= 0 && n < 0.2) {
+          incAmount = 0.1;
+        } else if (n >= 0.2 && n < 0.5) {
+          incAmount = 0.04;
+        } else if (n >= 0.5 && n < 0.8) {
+          incAmount = 0.02;
+        } else if (n >= 0.8 && n < 0.99) {
+          incAmount = 0.005;
+        } else {
+          incAmount = 0;
+        }
       }
 
-      n = Math.min(Math.max(n + amount, 0), 0.994);
-      return this.set(n);
+      return this.set(Math.min(Math.max(n + incAmount, 0), 0.994));
     }
+    return this;
   },
 
   start() {

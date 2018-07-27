@@ -1,6 +1,7 @@
 import { Router } from './rw-router';
 import { Template } from './rw-templater';
 import { Progress } from './rw-progress';
+import './styles.scss';
 
 Router.config();
 Router.navigate();
@@ -13,10 +14,12 @@ Router
     setTimeout(() => {
       if (latest === 'about') {
         Progress.done();
+        document.querySelector('a.active').classList.remove('active');
+        document.querySelector('#nav-tab-2').classList.add('active');
 
         document.getElementById('main').innerHTML = Template.it('about', {
-          name: 'Krasimir',
-          age: 29,
+          name: 'Richard',
+          age: 36,
         });
       }
     }, 200);
@@ -27,6 +30,8 @@ Router
     setTimeout(() => {
       if (latest === 'products') {
         Progress.done();
+        document.querySelector('a.active').classList.remove('active');
+        document.querySelector('#nav-tab-4').classList.add('active');
 
         document.getElementById('main').innerHTML = Template.it('loopBoolTest', {
           isFruit: Math.random() > 0.5,
@@ -51,11 +56,10 @@ Router
     setTimeout(() => {
       if (latest === '') {
         Progress.done();
+        document.querySelector('a.active').classList.remove('active');
+        document.querySelector('#nav-tab-1').classList.add('active');
 
-        document.getElementById('main').innerHTML = Template.it('<p>HOME: Hello, my name is {{name}}. I\'m {{age}} years old.</p>', {
-          name: 'Krasimir',
-          age: 29,
-        });
+        document.getElementById('main').innerHTML = Template.it('home');
       }
     }, 1500);
   })

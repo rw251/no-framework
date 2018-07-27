@@ -15,13 +15,19 @@ $css
   <!--[if lte IE 9]>
     <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
   <![endif]-->
-  <a data-href='/'>Home</a>
-  <a data-href='/about'>About</a>
-  <a data-href='/notfound'>Not found</a>
-  <a data-href='/products/12/edit/22'>12 22</a>
-  <a data-href='/products/13/edit/test'>13 test</a>
-  <p id="main">Hello world! This is HTML5 Boilerplate.</p>
+  <div class="topnav">
+      <a class="active" id='nav-tab-1' data-href='/'>Home</a>
+      <a id='nav-tab-2' data-href='/about'>About</a>
+      <a id='nav-tab-4' data-href='/products/12/edit/22'>12 22</a>      
+  </div>
+
+  <p id="main"></p>
+  
   $bundles
+
+  <script type='text/rw' id='home'>
+    <p>Home page.</p>
+  </script>
 
   <script type='text/rw' id='about'>
     <p>ABOUT: Hello, my name is {{name}}. I'm {{age}} years old.</p>
