@@ -1,0 +1,7 @@
+.vscode/
+.fusebox/
+dist/
+node_modules/
+
+.env
+*.log
