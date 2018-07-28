@@ -1,4 +1,5 @@
 const { FuseBox, QuantumPlugin, WebIndexPlugin, SassPlugin, CSSPlugin, CSSResourcePlugin, Sparky } = require('fuse-box');
+const fs = require('fs-extra');
 
 let fuse;
 let app;
@@ -24,7 +25,15 @@ Sparky.task('config', () => {
     ],
   });
 
-  app = fuse.bundle('app').instructions(' > index.js');
+  app = fuse
+    .bundle('app')
+    .instructions(' > index.js')
+    .completed((proc) => {
+      // rubbish way to ensure all routes lead to an index.html
+      setTimeout(()=>{
+        fs.copySync('dist/index.html', 'dist/about/index.html');
+      },1000);
+    });
 
   if (!isProduction) {
     fuse.dev();

@@ -4,7 +4,6 @@ import { Progress } from './rw-progress';
 import './styles.scss';
 
 Router.config();
-Router.navigate();
 let latest = '';
 // adding routes
 Router
@@ -64,3 +63,5 @@ Router
     }, 1500);
   })
   .listen();
+
+Router.navigate(window.location.pathname);
