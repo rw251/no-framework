@@ -112,14 +112,8 @@ exports.Progress = {
     }
     if (n <= 1) {
       if (typeof incAmount !== 'number') {
-        if (n >= 0 && n < 0.2) {
-          incAmount = 0.1;
-        } else if (n >= 0.2 && n < 0.5) {
-          incAmount = 0.04;
-        } else if (n >= 0.5 && n < 0.8) {
-          incAmount = 0.02;
-        } else if (n >= 0.8 && n < 0.99) {
-          incAmount = 0.005;
+        if (n >= 0 && n < 0.99) {
+          incAmount = -0.04289716316 * Math.log(n) - 0.0004519479162;
         } else {
           incAmount = 0;
         }

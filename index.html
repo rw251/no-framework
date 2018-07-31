@@ -1,0 +1,76 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title></title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  $css
+</head>
+
+<body><div class="topnav">
+    <a class="active" id='nav-tab-1' data-href='/'>Home</a>
+    <a id='nav-tab-2' data-href='/about'>About</a>
+    <a id='nav-tab-4' data-href='/products/12/edit/22'>12 22</a>      
+</div>
+
+<p id="main"></p>
+<script type='text/rw' id='home'>
+  <p>Home page.</p>
+</script>
+
+<script type='text/rw' id='about'>
+  <p>ABOUT: Hello, my name is {{name}}. I'm {{age}} years old.</p>
+</script>
+
+<script type='text/rw' id='boolTest'>
+  <div>
+    The next line gives the value of the property isData:
+  </div>
+  {{isData}}
+    THERE IS DATA
+  {{/isData}}
+</script>
+
+<script type="text/rw" id="loopTest">
+  Some fruit: 
+  {{fruit}}
+    {{name}} are {{colour}},
+  {{/fruit}}
+</script>
+
+<script type="text/rw" id="loopBoolTest">
+  <p>Some fruit if isFruit is true:<p>
+  {{isFruit}}
+    <ul>
+    {{fruit}}
+      <li>{{name}} are {{colour}}</li>
+    {{/fruit}}
+    </ul>
+  {{/isFruit}}
+  
+  Some cars if isCars is true:
+  {{isCars}}
+    <ul>
+    {{cars}}
+    <li>{{name}}s are {{speed}}</li>
+    {{/cars}}
+    </ul>
+  {{/isCars}}
+</script><!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title></title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  $css
+</head>
+
+<body>
