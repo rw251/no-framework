@@ -1,63 +1,27 @@
-const { FuseBox, QuantumPlugin, WebIndexPlugin, SassPlugin, CSSPlugin, CSSResourcePlugin, Sparky } = require('fuse-box');
-const fs = require('fs-extra');
+const { FuseBox, QuantumPlugin, SassPlugin, CSSPlugin, Sparky } = require('fuse-box');
+const fs = require('fs');
 const path = require('path');
-const frames = require('./src/frames');
-
-const mkDirByPathSync = (targetDir, { isRelativeToScript = false } = {}) => {
-  const { sep } = path;
-  const initDir = path.isAbsolute(targetDir) ? sep : '';
-  const baseDir = isRelativeToScript ? __dirname : '.';
-  let lastErr;
-
-  return targetDir.split(sep).reduce((parentDir, childDir) => {
-    const curDir = path.resolve(baseDir, parentDir, childDir);
-    try {
-      fs.mkdirSync(curDir);
-    } catch (err) {
-      if (err.code === 'EEXIST') { // Directory ${curDir} already exists!
-        return curDir;
-      }
-
-      // The following lines of code to support Windows and Mac specific errors.
-      if (err.code === 'ENOENT') { // Last dir fails with `EACCES` and current fails with `ENOENT`
-        throw lastErr;
-      }
-
-      const caughtErr = ['EACCES', 'EPERM', 'EISDIR'].indexOf(err.code) > -1;
-      if (!caughtErr || caughtErr && targetDir === curDir) {
-        throw err; // Throw if it's only the last created dir.
-      }
-
-      lastErr = err;
-    }
-
-    return curDir;
-  }, initDir);
-};
 
 const constructHtml = (css, js) => {
-  const templates = fs.readFileSync('./src/html/templates/all.html', 'utf8');
-  const headerAboveCss = fs.readFileSync('./src/html/partials/headerAboveCss.html', 'utf8');
-  const headerBelowCss = fs.readFileSync('./src/html/partials/headerBelowCss.html', 'utf8');
-  const bodyAboveContent = fs.readFileSync('./src/html/partials/bodyAboveContent.html', 'utf8');
-  const bodyBelowContentAboveJs = fs.readFileSync('./src/html/partials/bodyBelowContentAboveJs.html', 'utf8');
-  const bodyBelowJs = fs.readFileSync('./src/html/partials/bodyBelowJs.html', 'utf8');
-  frames.forEach((frame) => {
-    const content = fs.readFileSync(frame.html, 'utf8');
-    const html = `
-      ${headerAboveCss}
-      ${css.map(c => `<link rel="stylesheet" type="text/css" href="/${c}">`).join('')}   
-      ${headerBelowCss}
-      ${bodyAboveContent}
-      ${content}
-      ${bodyBelowContentAboveJs}
-      ${js.map(j => `<script type="text/javascript" src="/${j}"></script>`).join('')}      
-      ${templates}
-      ${bodyBelowJs}
-    `;
-    mkDirByPathSync(path.join('dist', frame.path), { isRelativeToScript: true });
-    fs.writeFileSync(path.join('dist', frame.path, 'index.html'), html);
+  const templates = [];
+  fs.readdirSync('./src/html/templates').forEach((file) => {
+    const template = fs.readFileSync(path.join('./src/html/templates', file), 'utf8');
+    templates.push(`<script type='text/rw' id='${file.split('.')[0]}'>${template}</script>`);
   });
+  const headerAboveCss = fs.readFileSync('./src/html/partials/headerAboveCss.html', 'utf8');
+  const belowCssAboveJs = fs.readFileSync('./src/html/partials/belowCssAboveJs.html', 'utf8');
+  const belowJs = fs.readFileSync('./src/html/partials/belowJs.html', 'utf8');
+
+  const html = `
+    ${headerAboveCss}
+    ${css.map(c => `<link rel="stylesheet" type="text/css" href="/${c}">`).join('')}   
+    ${belowCssAboveJs}
+    ${js.map(j => `<script type="text/javascript" src="/${j}"></script>`).join('')}  
+    ${templates.join('')}     
+    ${belowJs}
+  `;
+
+  fs.writeFileSync(path.join('dist', 'index.html'), html);
 };
 
 let fuse;
@@ -74,7 +38,7 @@ Sparky.task('config', () => {
     sourceMaps: !isProduction,
     useTypescriptCompiler: true,
     plugins: [
-      // WebIndexPlugin({ template: 'src/index.html' }),
+      // WebIndexPlugin({ template: 'src/html/index.html' }),
       [SassPlugin(), CSSPlugin()],
       (isProduction || isStaging) && QuantumPlugin({
         bakeApiIntoBundle: 'app',
@@ -89,7 +53,7 @@ Sparky.task('config', () => {
     .instructions(' > index.js');
 
   if (!isProduction) {
-    fuse.dev();
+    fuse.dev({ fallback: 'index.html' }); // fallback ensures all 404s get the index.html
   }
 });
 
@@ -109,9 +73,6 @@ Sparky.task('default', ['config'], () => {
   return fuse.run().then(() => {
     // get tempaltes
     constructHtml([], ['app.js']);
-
-    // console.log(producer.bundles.map(bundle => `<script type="text/javascript"
-    // src="${bundle.context.output.lastPrimaryOutput.relativePath}"></script>`).join(''));
   });
 });
 
@@ -133,7 +94,7 @@ Sparky.task('build', ['set-production', 'config'], () => {
 // Dist task "node fuse dist"
 Sparky.task('dist', ['set-staging', 'config'], () => {
   app.hmr().watch();
-  return fuse.run().then((producer) => {
+  fuse.run().then((producer) => {
     const jsBundles = [];
     const injectedCss = [];
     producer.bundles.forEach((bundle) => {

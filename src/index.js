@@ -1,82 +1,48 @@
-import { Router } from './rw-router';
-import { Template } from './rw-templater';
-import { Progress } from './rw-progress';
+import { Router } from 'rw-router';
+import { routes } from './routes';
 import './styles.scss';
 
+// The main entry point for the js code
 
-let latest = '';
-
-const index = () => {
-  Progress.start();
-  latest = '';
-  setTimeout(() => {
-    if (latest === '') {
-      Progress.done();
-      document.querySelector('a.active').classList.remove('active');
-      document.querySelector('#nav-tab-1').classList.add('active');
-
-      document.getElementById('main').innerHTML = Template.it('home');
-    }
-  }, 1500);
-};
-
-const about = () => {
-  Progress.start();
-  latest = 'about';
-  setTimeout(() => {
-    if (latest === 'about') {
-      Progress.done();
-      document.querySelector('a.active').classList.remove('active');
-      document.querySelector('#nav-tab-2').classList.add('active');
-
-      document.getElementById('main').innerHTML = Template.it('about', {
-        name: 'Richard',
-        age: 36,
-      });
-    }
-  }, 200);
-};
-
-const products = () => {
-  Progress.start();
-  latest = 'products';
-  setTimeout(() => {
-    if (latest === 'products') {
-      Progress.done();
-      document.querySelector('a.active').classList.remove('active');
-      document.querySelector('#nav-tab-4').classList.add('active');
-
-      document.getElementById('main').innerHTML = Template.it('loopBoolTest', {
-        isFruit: Math.random() > 0.5,
-        fruit: [
-          { name: 'apples', colour: 'green' },
-          { name: 'oranges', colour: 'orange' },
-          { name: 'bananas', colour: 'yellow' },
-        ],
-        isCars: Math.random() > 0.5,
-        cars: [
-          { name: 'mini', speed: 'slow' },
-          { name: 'civic', speed: 'medium' },
-          { name: 'porsche', speed: 'fast' },
-        ],
-      });
-    }
-  }, 500);
-};
-
+// Initialize the router
 Router.config();
-// adding routes
-Router
-  .add(/about/, about)
-  .add(/products\/(.*)\/edit\/(.*)/, products)
-  .add('', index)
-  .listen();
 
+// This script is only called on a server load so we might
+// need to do some client routing
+
+// First get the path
 const trimmedPath = window.location.pathname.replace(/^\/+|\/+$/g, '');
-switch (trimmedPath) {
-  case 'about':
-    about();
-    break;
-  default:
-    index();
+
+// Now look for a match in the routes
+let controller = false;
+Object.keys(routes).forEach((route) => {
+  // Add all the routes to the Router
+  Router.add(routes[route].regex, routes[route].controller);
+
+  if (controller) return;
+  if (routes[route].regex.test(trimmedPath)) {
+    ({ controller } = routes[route]);
+  }
+});
+
+// Start the router listening
+Router.listen();
+
+if (!controller) {
+  // Shouldn't actually get here - but if we do
+  // just load the homepage
+  controller = routes.default.controller();
+}
+const initialize = () => {
+  controller(() => {
+    document.getElementById('container').style.display = '';
+  });
+};
+
+if (document.attachEvent ? document.readyState === 'complete' : document.readyState !== 'loading') {
+  // dom loaded so safe to call controller
+  initialize();
+} else {
+  // dom not loaded so let's wait before firing the controller
+  document.addEventListener('DOMContentLoaded', initialize);
 }
