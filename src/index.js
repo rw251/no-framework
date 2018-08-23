@@ -22,6 +22,7 @@ const trimmedPath = window.location.pathname.replace(/^\/+|\/+$/g, '');
 
 // Now look for a match in the routes
 let controller = false;
+let parameters = [null];
 let defaultController;
 routes.forEach((route) => {
   // Add all the routes to the Router
@@ -29,8 +30,10 @@ routes.forEach((route) => {
 
   if (controller) return;
   if (route.isDefault) defaultController = route.controller;
-  if (route.regex.test(trimmedPath)) {
+  const result = trimmedPath.match(route.regex);
+  if (result) {
     ({ controller } = route);
+    parameters = result;
   }
 });
 
@@ -43,9 +46,10 @@ if (!controller) {
   controller = defaultController;
 }
 const initialize = () => {
-  controller(() => {
+  parameters[0] = () => {
     document.getElementById('container').style.display = '';
-  });
+  };
+  controller.apply({}, parameters);
 };
 
 if (document.attachEvent ? document.readyState === 'complete' : document.readyState !== 'loading') {
