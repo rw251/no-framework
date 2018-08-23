@@ -1,9 +1,10 @@
 // If lots of routes then split into files in a
 // directory called 'routes'
-import { index, about, products } from './controllers';
+import { practice, about, products } from './controllers';
 
 exports.routes = {
-  about: { controller: about, regex: /about/ },
+  practice: { controller: practice, regex: /page\/practice/ },
+  practice: { controller: practice, regex: /page\/practice/ },
   products: { controller: products, regex: /products\/(.*)\/edit\/(.*)/ },
-  default: { controller: index, regex: /.*/ },
+  default: { controller: about, regex: /.*/ },
 };
