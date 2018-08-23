@@ -7,7 +7,8 @@ import 'rw-progress/style.scss';
 
 let latestPage = '';
 
-export function practice(callback) {
+export function practice(callback, url) {
+  console.log(url);
   Progress.start();
   latestPage = '';
   setTimeout(() => {
