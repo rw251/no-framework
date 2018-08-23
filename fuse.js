@@ -1,4 +1,4 @@
-const { FuseBox, QuantumPlugin, SassPlugin, CSSPlugin, Sparky } = require('fuse-box');
+const { FuseBox, QuantumPlugin, SassPlugin, CSSPlugin, Sparky } = require('fuse-box'); // eslint-disable-line import/no-extraneous-dependencies
 const fs = require('fs');
 const path = require('path');
 
@@ -38,8 +38,7 @@ Sparky.task('config', () => {
     sourceMaps: !isProduction,
     useTypescriptCompiler: true,
     plugins: [
-      // WebIndexPlugin({ template: 'src/html/index.html' }),
-      [SassPlugin(), CSSPlugin()],
+      [SassPlugin({ importer: true }), CSSPlugin()],
       (isProduction || isStaging) && QuantumPlugin({
         bakeApiIntoBundle: 'app',
         uglify: true,
@@ -50,11 +49,20 @@ Sparky.task('config', () => {
 
   app = fuse
     .bundle('app')
-    .instructions(' > index.js');
+    .instructions(' > index.js')
+    .completed(() => {
+      Sparky.context.css = [];
+      Sparky.context.js = ['app.js'];
+      Sparky.exec('construct-html');
+    });
 
   if (!isProduction) {
     fuse.dev({ fallback: 'index.html' }); // fallback ensures all 404s get the index.html
   }
+});
+
+Sparky.task('construct-html', () => {
+  constructHtml(Sparky.context.css, Sparky.context.js);
 });
 
 Sparky.task('set-production', () => {
@@ -71,8 +79,7 @@ Sparky.task('set-staging', () => {
 Sparky.task('default', ['config'], () => {
   app.hmr().watch();
   return fuse.run().then(() => {
-    // get tempaltes
-    constructHtml([], ['app.js']);
+    Sparky.exec('construct-html');
   });
 });
 
@@ -87,7 +94,9 @@ Sparky.task('build', ['set-production', 'config'], () => {
     producer.injectedCSSFiles.forEach((cssFile) => {
       injectedCss.push(cssFile);
     });
-    constructHtml(injectedCss, jsBundles);
+    Sparky.context.css = injectedCss;
+    Sparky.context.js = jsBundles;
+    Sparky.exec('construct-html');
   });
 });
 
@@ -103,6 +112,8 @@ Sparky.task('dist', ['set-staging', 'config'], () => {
     producer.injectedCSSFiles.forEach((cssFile) => {
       injectedCss.push(cssFile);
     });
-    constructHtml(injectedCss, jsBundles);
+    Sparky.context.css = injectedCss;
+    Sparky.context.js = jsBundles;
+    Sparky.exec('construct-html');
   });
 });
