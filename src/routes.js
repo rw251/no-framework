@@ -2,8 +2,8 @@
 // directory called 'routes'
 import { index, about, products } from './controllers';
 
-exports.routes = {
-  about: { controller: about, regex: /about/ },
-  products: { controller: products, regex: /products\/(.*)\/edit\/(.*)/ },
-  default: { controller: index, regex: /.*/ },
-};
+export default [
+  { controller: about, regex: /about/ },
+  { controller: products, regex: /products\/(.*)\/edit\/(.*)/ },
+  { controller: index, regex: /.*/, isDefault: true },
+];

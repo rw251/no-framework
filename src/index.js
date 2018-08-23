@@ -1,5 +1,5 @@
 import { Router } from 'rw-router';
-import { routes } from './routes';
+import routes from './routes';
 import './styles.scss';
 
 // The main entry point for the js code
@@ -15,13 +15,15 @@ const trimmedPath = window.location.pathname.replace(/^\/+|\/+$/g, '');
 
 // Now look for a match in the routes
 let controller = false;
-Object.keys(routes).forEach((route) => {
+let defaultController;
+routes.forEach((route) => {
   // Add all the routes to the Router
-  Router.add(routes[route].regex, routes[route].controller);
+  Router.add(route.regex, route.controller);
 
   if (controller) return;
-  if (routes[route].regex.test(trimmedPath)) {
-    ({ controller } = routes[route]);
+  if (route.isDefault) defaultController = route.controller;
+  if (route.regex.test(trimmedPath)) {
+    ({ controller } = route);
   }
 });
 
@@ -31,7 +33,7 @@ Router.listen();
 if (!controller) {
   // Shouldn't actually get here - but if we do
   // just load the homepage
-  controller = routes.default.controller();
+  controller = defaultController;
 }
 const initialize = () => {
   controller(() => {
