@@ -23,6 +23,9 @@
     "uglify-js": "^3.4.7"
   },
   "dependencies": {
+    "bootstrap": "^3.3.7",
+    "bootstrap-select": "^1.12.4",
+    "jquery": "^3.3.1",
     "rw-progress": "^1.0.3",
     "rw-router": "^1.0.0",
     "rw-templater": "^1.0.0"

@@ -2,6 +2,13 @@ import { Router } from 'rw-router';
 import { routes } from './routes';
 import './styles.scss';
 
+const $ = require('jquery');
+
+window.$ = $;
+window.jQuery = $;
+require('bootstrap');
+require('bootstrap-select');
+
 // The main entry point for the js code
 
 // Initialize the router

@@ -1,24 +1,641 @@
-body, html {
-  padding:0;
-  margin:0;
+@import "~bootstrap/dist/css/bootstrap";
+
+/*
+  Force full width & height.
+
+  If this block is removed, the layout height/length will be determined by
+  the amount of content in the page. That might result in a page which has
+  a footer only a few inches from the top of the viewport, or one which
+  scrolls beyond the viewport.
+
+  This forces the layout to always be full screen regardless of how much,
+  or how little, content is in place. Neither is "right" or "wrong", there
+  are valid cases for each. I just want to be clear what's controlling the
+  page/viewport height.
+*/
+html, body, .viewport {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
-.topnav {
-  background-color: #333;
-  overflow: hidden;
+body {
+  padding-top: 50px;
 }
 
-a.active {
-  background-color: #2d9;
-  color: white;
+.loading-shade {
+  width: 100%;
+  background-color: lightgray;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 4;
+  text-align: center;
 }
 
-.topnav a {
+.inline-loading-shade {
+  display: none;
+  position: absolute;
+  top: 150px;
+}
+
+/* COMMON.CSS */
+.page-header {
+  padding-bottom: 0 !important;
+  margin: 0 !important;
+  border-bottom: 0 !important;
+}
+.page-header .navbar-nav {
+  float: right;
+}
+.page-header>div>div, .page-header>div>ul {
+  display:inline-block;
+}
+.text-edit {
+  padding: 13px 0 0 0;
+}
+.account {
+  text-align:right;
+}
+.account>div, .account>ul {
+  text-align:left;
+}
+.navbar .nav>li>a.brand {
+  padding-left:20px;
+  margin-left:0
+}
+.content {
+  width:100%
+}
+footer {
+  position:fixed;
+  left:0;
+  bottom:0;
+  height:30px;
+  width:100%;
+  background:#ddd;
+  -webkit-box-shadow:0 8px 6px 6px black;
+  -moz-box-shadow:0 8px 6px 6px black;
+  box-shadow:0 8px 6px 6px black
+}
+footer p {
+  padding:5px 0 12px 10px
+}
+
+/* DASHBOARD.CSS */
+
+/*
+    Document   : public/dashboard/assets/css/dashboard.css
+    Created on : 2014-04-14 09:36 AM
+    Author     : rw251
+    Description:
+    Stylesheet for the dashboard
+*/
+
+.c3-grid line {
+  stroke: #ddd;
+  stroke-width: 1;
+  stroke-dasharray: 0;
+}
+
+.c3-ygrid-line.ccg-ygrid line {
+  stroke: black;
+  stroke-width: 1;
+}
+
+.c3-ygrid-line.ccg-ygrid text {
+  fill:black;
+}
+
+.c3-line-ccg {
+  stroke-width: 0;
+}
+
+.id_comparison_date_label_grey {
+  color: #ccc;
+  font-weight: normal;
+}
+
+.dash-breadcrumb {
+  padding: 8px 15px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  list-style: none;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+.dash-breadcrumb > li {
+  display: inline-block;
+}
+.dash-breadcrumb > li + li:before {
+  padding: 0 5px;
+  color: #ccc;
+  content: "/\00a0";
+}
+.dash-breadcrumb > .active {
+  color: #999;
+}
+/*
+  Make "Patient Safety" menu non-selectable - see header html
+*/
+.navbar-brand-static {
+  float: left;
+  height: 50px;
+  padding: 15px 15px;
+  font-size: 18px;
+  line-height: 20px;
+  color: #777;
+}
+
+.table-borderless td,
+.table-borderless th{
+  border: 0 !important
+}
+
+.blue-background {
+  background-color: #BFDFFF;
+  outline:1px;
+}
+/*
+* Base structure
+*/
+
+/* Move down content because we have a fixed navbar that is 50px tall */
+
+.table-nonfluid {
+  width: auto !important;
+}
+
+.top-buffer {
+  margin-top: 10px;
+}
+
+.bottom-buffer {
+  margin-bottom: 10px;
+}
+.left-buffer {
+  margin-left: 10px;
+}
+.right-buffer {
+  margin-right: 10px;
+}
+/*
+* Global add-ons
+*/
+
+.sub-header {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.inline-element {
+  display: inline-block;
+}
+.align-bottom {
+  vertical-align: bottom;
+  padding-bottom: 10px;
+}
+/*
+* Sidebar
+*/
+
+/* Make sure a pointer is displayed when hovering over unselected tabs*/
+.nav-tabs > li > a:hover {
+  cursor: pointer;
+}
+
+.navbar-inverse .navbar-nav > li > a:focus,
+.navbar-inverse .navbar-brand:focus,
+.navbar-inverse .navbar-brand:hover {
+  color: #9d9d9d
+}
+
+/* For upside down caret*/
+.caret.caret-reversed {
+  border-top-width: 0;
+  border-bottom: 4px solid #000000;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+/* Hide for mobile, show later */
+.sidebar {
+  display: none;
+}
+@media (min-width: 768px) {
+  .sidebar {
+      position: fixed;
+      top: 41px;
+      bottom: 0;
+      left: 0;
+      z-index: 1000;
+      display: block;
+      padding: 20px;
+      overflow-x: hidden;
+      overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+      background-color: #f5f5f5;
+      border-right: 1px solid #eee;
+  }
+}
+
+/* Sidebar navigation */
+.nav-sidebar {
+  margin-right: -21px; /* 20px padding + 1px border */
+  margin-bottom: 20px;
+  margin-left: -20px;
+}
+.nav-sidebar > li > a {
+  padding-right: 20px;
+  padding-left: 20px;
+}
+.nav.nav-sidebar > .active > a {
+  color: #fff;
+  background-color: #428bca;
+}
+
+
+
+/*
+* Main content
+*/
+
+.main {
+  padding: 10px;
+}
+@media (min-width: 768px) {
+  .main {
+      padding-right: 40px;
+      padding-left: 40px;
+  }
+}
+.main .page-header {
+  margin-top: 0;
+}
+
+
+/*
+* Placeholder dashboard ideas
+*/
+
+.placeholders {
+  margin-bottom: 30px;
+  text-align: center;
+}
+.placeholders h4 {
+  margin-bottom: 0;
+}
+.placeholder {
+  margin-bottom: 20px;
+}
+.placeholder img {
+  display: inline-block;
+  border-radius: 50%;
+}
+
+.table-narrow {
+  width:auto;
+}
+
+.table caption.header {
+  font-style: italic;
+  text-align: left;
+  font-weight: bold;
+}
+
+.table caption.footer {
+  caption-side: bottom;
+  font-size: 0.8em;
+  text-align: left;
+}
+
+.dropdown {
+  /*width: 200px;*/
+  /*text-align: right;*/
+}
+
+.dropdown ul {
+  text-align: left;
+}
+
+.table > tbody > tr > td.canClick:hover {
+  background-color: #a6e1ec;
+}
+
+.scroll-table-header > .table {
+  border:0;
+}
+
+.scroll-table-header >.table > thead > tr > th{
+  border: 0;
+}
+
+.scroll-table-header>table>tbody>tr.no-priority,
+.scroll-table-header>table>tbody>tr.no-priority>td,
+.scroll-table-body>table>tbody>tr.priority,
+.scroll-table-body>table>tbody>tr.priority>td,
+.scroll-table-header>table>tbody>tr tr,
+.scroll-table-header>table>tbody>tr button,
+.scroll-table-header>table>tbody>tr p,
+.scroll-table-header>table>tbody>tr h4,
+.scroll-table-header>table>tbody>tr tr>td
+{
+  visibility: collapse;
+  vertical-align: top; /* for the buttons */
+  margin-top:0;
+  margin-bottom:0;
+  line-height: 0; /* Set the height of the line box to 0
+                   in order to remove the occupied space */
+  padding-top:0;
+  padding-bottom:0;
+  border-top:0;
+  border-bottom:0;
+}
+
+.scroll-table-header>table>tbody table {
+  margin-bottom:0;
+}
+
+.scroll-table-header>table {
+  margin-bottom:0;
+  padding-bottom:0;
+  border-bottom:0;
+}
+
+.scroll-table-body>table>thead>tr, .scroll-table-body>table>thead>tr>th {
+  visibility: collapse;
+  line-height: 0; /* Set the height of the line box to 0
+                   in order to remove the occupied space */
+  padding-top:0;
+  padding-bottom:0;
+  border-top:0;
+  border-bottom:0;
+}
+
+.scroll-table-body>table {
+  margin-top:0;
+  padding-top:0;
+  border-top:0;
+}
+
+.scroll-table-body{
+  overflow-y: auto;
+  height: 300px;
+}
+
+.scroll-table-header>.table > thead > tr > th {
+  border-right: 1px solid transparent;
+}
+
+.scroll-table-header>.table > tbody > tr > td {
+  border-right: 1px solid lightgrey;
+}
+
+.scroll-table-body>.table > thead > tr > th {
+  border-right: 1px solid lightgrey;
+}
+
+.scroll-table-body>.table > tbody > tr > td {
+  border-right: 1px solid lightgrey;
+}
+
+@media screen and (min-height: 688px) {
+  .scroll-table-body {
+      height: 320px;
+  }
+}
+
+@media screen and (min-height: 718px) {
+  .scroll-table-body {
+      height: 350px;
+  }
+}
+
+@media screen and (min-height: 768px) {
+  .scroll-table-body {
+      height: 400px;
+  }
+}
+
+@media screen and (min-height: 868px) {
+  .scroll-table-body {
+      height: 500px;
+  }
+}
+
+@media screen and (min-height: 968px) {
+  .scroll-table-body {
+      height: 600px;
+  }
+}
+
+@media screen and (min-height:1068px) {
+  .scroll-table-body {
+      height: 700px;
+  }
+}
+
+.scroll-table-header{
+  padding-right: 17px;
+}
+
+/*
+*/
+@media (min-width: 500px) {
+  .container-small {
+      width: 480px;
+  }
+}
+
+
+/*
+Prominent hyperlinks
+*/
+
+.table > tbody > tr > td.prominentLink:hover {
+  background-color: yellow;
+  cursor: pointer;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  padding-left: 7px;
+}
+
+.table > tbody > tr > td.prominentLink:hover a {
+  text-decoration: underline;
+}
+
+td.prominentLink a {
+  color: blue;
+  font-weight: bold;
+}
+
+/*
+
+change nav text on smaller screens
+
+*/
+$navTextToggle:900;
+@media only screen and (min-width: $navTextToggle * 1px) {
+  .showWhenSmall {
+    display: none !important;
+  }
+}
+@media only screen and (max-width: ($navTextToggle - 0.1) * 1px) {
+  .hideWhenSmall {
+    display: none !important;
+  }
+}
+/*
+Change hamburger menu toggle
+- this works for less than 768px - if you want larger see
+https://stackoverflow.com/a/36289507/596639
+*/
+$navbarToggle:600;
+@media only screen and (min-width: $navbarToggle * 1px) {
+  .collapse {
+      display: block; /* collapse element remains visible until new cut off */
+  }
+
+  .navbar-header {
+      float: left; /* below cut off only this is visible so it will be a block. before cut off it floats left */
+  }
+
+  .navbar-toggle {
+      display: none; /* hide toggle menu until new cut off */
+  }
+  
+  .navbar > .container .navbar-brand, .navbar > .container-fluid .navbar-brand {
+    margin-left: -15px;
+  }
+
+  .container > .navbar-header, .container-fluid > .navbar-header, .container > .navbar-collapse, .container-fluid > .navbar-collapse {
+    margin-right: 0;
+    margin-left: 0;
+  }
+
+  .navbar-nav {
+    float: left; /* keeps left content left until new cut off*/
+    margin: 0; 
+  }
+
+  .navbar-nav.navbar-right {
+    float: right; /* keeps right content right until new cut off*/
+    margin: 0;
+  }
+  .navbar-nav>li {
+    float: left; /* keeps tabs floated left - after new cut off these are block and stack */
+  }
+  .navbar-nav>li>a {
+    padding-top: 15px; /* retain padding on tab text - after cut off this is removed */
+    padding-bottom: 15px;
+  }
+  
+  .navbar-nav .open .dropdown-menu {
+    position: absolute;
+    float: left;
+    width: auto;
+    margin-top: 2px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  }
+
+  .navbar-inverse .navbar-nav .open .dropdown-menu .divider {
+    background-color: #e5e5e5;;
+  }
+  .navbar-inverse .navbar-nav .open .dropdown-menu > li > a {
+    color: #333;
+  }
+
+  .navbar-nav .open .dropdown-menu > li > a {
+    line-height: 1.42857143;
+  }
+  .navbar-nav .open .dropdown-menu > li > a, .navbar-nav .open .dropdown-menu .dropdown-header {
+    padding: 3px 20px;
+  }
+  .navbar-right .dropdown-menu {
+    right: 0;
+    left: auto;
+  }
+}
+
+
+@media only screen and (max-width: ($navbarToggle - 0.1) * 1px) {
+   .collapse {
+      display: none;
+   }
+
+   .navbar-header {
+      display: block;
+   }
+}
+
+/* Spacing in login form for small screens */
+.form-inline.nice-spacing label,
+.form-inline.nice-spacing button {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.login-well {
+  margin-top: 100px;
+}
+
+/* 991 is lg-md boundary */
+@media only screen and (max-width: 991px) {
+  .login-well {
+    margin-top: 0;
+    padding: 0;
+  }
+  .well {
+    padding: 0;
+    padding-top: 5px;
+  }
+}
+
+/* 767 is md-sm boundary */
+@media only screen and (max-width: 767px) {
+  .signin [class|="col"] {
+    padding-right: 0;
+  }
+}
+
+.inline-select.form-control,
+.inline-select.form-control.bootstrap-select {
+  width:auto;
+  display:inline-block;
+}
+
+.practice-summary-box {
   float: left;
   display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
+  border-radius: 2px;
+  min-width: 0;
+  position: relative;
   text-decoration: none;
-  font-size: 17px;
+  -webkit-box-shadow: 0 1px 5px rgba(0,0,0,.2), 0 2px 2px rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.12);
+  box-shadow: 0 1px 5px rgba(0,0,0,.2), 0 2px 2px rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.12);
+  padding: 16px;
+}
+
+.practice-summary-title {
+  font-size: 18px!important;
+  font-weight: 400;
+  line-height: 32px!important;
+  letter-spacing: normal!important;
+}
+
+.practice-summary-value {
+  float: right;
+}
+
+.tab-borders {
+  border-left:1px solid #ddd;
+  border-bottom:1px solid #ddd;
+  border-right:1px solid #ddd;
 }
