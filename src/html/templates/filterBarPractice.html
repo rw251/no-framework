@@ -1,0 +1,34 @@
+<form id="filterBarPractice" class="form-inline">
+  <div class="form-group">
+    {{isSinglePractice}}
+    <h2>{{singlePractice.short_name}}</h2>
+    {{/isSinglePractice}}
+    {{areMultiplePractices}}
+    <select class="form-control inline-select selectpicker" id="practiceList" data-live-search="true" data-width="auto" title="Select a practice">
+      {{practices}}
+      <option value="{{_id}}" {{isSelected}}selected{{/isSelected}}>{{short_name}}</option>
+      {{/practices}}
+    </select>
+    {{/areMultiplePractices}}
+  </div>
+  <div class="form-group left-buffer align-bottom">
+    <label for="reportDate" style="display:block;">Report date:</label>
+    <select class="inline-select" id="dateList" name="reportDate">
+      {{dates}}
+      {{shouldDisplay}}
+      <option value="{{_id}}" {{isSelected}}selected{{/isSelected}}>{{value}}</option>
+      {{/shouldDisplay}}
+      {{/dates}}
+    </select>
+  </div>
+  <div class="form-group left-buffer align-bottom">
+    <label for="comparisonDate" style="display:block;">Comparison date:</label>
+    <select class="inline-select" id="dateCompareList" name="comparisonDate">
+      {{comparisonDates}}
+      {{shouldDisplay}}
+      <option value="{{_id}}" {{isSelected}}selected{{/isSelected}}>{{value}}</option>
+      {{/shouldDisplay}}
+      {{/comparisonDates}}
+    </select>
+  </div>
+</form>

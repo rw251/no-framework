@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#4DA5F4">
+  <meta name="csrf-token">
+  <link rel="icon" href="/favicon.ico?v=2" type="image/x-icon">
+  <title>SMASH - offline</title>
+  <link rel="stylesheet" href="/css/app.css">
+  <meta name="theme-color" content="#006df0">
+  <link href="https://fonts.googleapis.com/css?family=PT+Mono|PT+Sans:400,700" rel="stylesheet">
+  <!-- remove this if you use Modernizr-->
+  <!-- replaces the 'no-js' class with 'js'-->
+  <script>(function (e, t, n) { var r = e.querySelectorAll("html")[0]; r.className = r.className.replace(/(^|\s)no-js(\s|$)/, "$1js$2") })(document, window, 0);
+  </script>
+</head>
+
+<body class="event-tracker">
+  <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <div class="navbar-brand">
+          <span>SMASH - The Salford Medication Safety Dashboard</span>
+        </div>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav"></ul>
+        <ul class="nav navbar-nav navbar-right"></ul>
+      </div>
+    </div>
+  </nav>
+  <section class="main" id="mainContent">
+    <div style="padding:5px;">
+      <div class="alert alert-danger">
+          <p>
+            <strong>Oops!!!!</strong> It looks like you're offline... can you access any other websites? If you can then maybe
+            it's me and not you who is offline so please drop an email to the support team (support@smash.srft.nhs.uk) and
+            they'll try and get me working again soon!
+          </p>
+        </div>
+    </div>
+    <div class="col-lg-offset-2 col-lg-8 col-md-10 col-md-offset-1">
+      <h1>SMASH</h1>
+      <p>Welcome to SMASH, the medication safety dashboard!</p>
+      <p>This system examines electronic health records and identifies patients who may be potentially at risk due to the medications
+        that they are receiving. These lists of patients are then displayed to support health professionals when making decisions
+        about patient care which could lead to improvements in medication safety in primary care.</p>
+      <p>The system is currently being evaluated in Salford Clinical Commissioning Group (CCG), with general practices receiving
+        pharmacist support to help address medication safety challenges highlighted by the dashboard. User feedback will
+        be incorporated into a second version of the dashboard for wider rollout across Greater Manchester.
+      </p>
+      <p>If you would like more information, please contact
+        <a href="mailto:support@smash.srft.nhs.uk">support@smash.srft.nhs.uk</a>.</p>
+      <p>
+        <small>This dashboard has been developed by the
+          <a href="http://www.patientsafety.manchester.ac.uk/" target="_blank" rel="noopener">NIHR Greater Manchester Patient Safety Translational Research Centre (GM PSTRC)</a>.</small>
+      </p>
+      <p>
+        <small>
+          <small>The views expressed are those of the authors and not necessarily those of the NHS, the NIHR or the Department of
+            Health.</small>
+        </small>
+      </p>
+      <div class="row">
+        <div class="col-sm-4 col-xs-6">
+          <img src="/img/logo_uom.png" style="max-width: 100%; max-height: 100%;">
+        </div>
+        <div class="col-sm-4 col-xs-6">
+          <img src="/img/logo_nihr.png" style="max-width: 100%; max-height: 100%;">
+        </div>
+      </div>
+    </div>
+  </section>
+  <script src="/js/libraries.js"></script>
+</body>
+
+</html>

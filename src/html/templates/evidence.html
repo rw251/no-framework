@@ -1,0 +1,22 @@
+<div class="row">
+  <div class="col-xs-12 col-md-8">
+    <select class="form-control selectpicker" id="indicatorList" data-live-search="true" data-style="btn-lg btn-default" title="Select an indicator to view the evidence summary">
+      {{indicators}}
+        <option value="{{_id}}" {{isSelected}}selected{{/isSelected}}>{{short_name}}</option>
+      {{/indicators}}
+    </select>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12 col-md-8">
+    <hr/>
+    <div id="info" style="height:70vh;overflow-y:auto;">
+      {{selectedIndicator.info}}
+
+      {{noneSelected}}
+        The evidence summaries for each indicator are displayed here - please select an indicator from the drop down list above.
+      {{/noneSelected}}
+    </div>
+  </div>
+</div>

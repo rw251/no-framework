@@ -1,4 +1,4 @@
-import { Template } from 'rw-templater';
+import Template from 'rw-templater';
 
 export default function (callback) {
   document.querySelector('a.active').classList.remove('active');

@@ -1,4 +1,4 @@
-import { Template } from 'rw-templater';
+import Template from 'rw-templater';
 import './about.scss';
 
 export default function (callback) {
