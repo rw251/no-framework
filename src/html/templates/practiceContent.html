@@ -56,13 +56,13 @@
           {{summary.tableData}}
           <tr class="no-priority">
             <td title="{{long_name}}" data-toggle="tooltip" data-container="body" data-placement="top">{{short_name}}</td>
-            <td class="prominentLink" title="Click to view patients" data-toggle="tooltip" data-container="body" data-placement="left" data-href="/practice/{{summary.practiceId}}/date/{{summary.dateId}}/comparedWith/{{summary.comparisonDateId}}/indicator/{{id}}"><a href="javascript:void()">{{num}}</a></td>
+            <td class="prominentLink" title="Click to view patients" data-toggle="tooltip" data-container="body" data-placement="left" data-href="/practice/{{summary.practiceId}}/date/{{summary.dateId}}/comparedWith/{{summary.comparisonDateId}}/indicator/{{id}}/affected"><a href="javascript:void()">{{num}}</a></td>
             <td>{{denom}}</td>
             <td>{{avg}}</td>
             <td>{{ccg}}</td>
-            <td class="prominentLink" title="Click to view patients" data-toggle="tooltip" data-container="body" data-placement="left" data-href="/practice/{{summary.practiceId}}/date/{{summary.dateId}}/comparedWith/{{summary.comparisonDateId}}/indicator/{{id}}"><a href="javascript:void()">{{resolved}}</a></td>
-            <td class="prominentLink" title="Click to view patients" data-toggle="tooltip" data-container="body" data-placement="left" data-href="/practice/{{summary.practiceId}}/date/{{summary.dateId}}/comparedWith/{{summary.comparisonDateId}}/indicator/{{id}}"><a href="javascript:void()">{{existing}}</a></td>
-            <td class="prominentLink" title="Click to view patients" data-toggle="tooltip" data-container="body" data-placement="left" data-href="/practice/{{summary.practiceId}}/date/{{summary.dateId}}/comparedWith/{{summary.comparisonDateId}}/indicator/{{id}}"><a href="javascript:void()">{{new}}</a></td>
+            <td class="prominentLink" title="Click to view patients" data-toggle="tooltip" data-container="body" data-placement="left" data-href="/practice/{{summary.practiceId}}/date/{{summary.dateId}}/comparedWith/{{summary.comparisonDateId}}/indicator/{{id}}/resolved"><a href="javascript:void()">{{resolved}}</a></td>
+            <td class="prominentLink" title="Click to view patients" data-toggle="tooltip" data-container="body" data-placement="left" data-href="/practice/{{summary.practiceId}}/date/{{summary.dateId}}/comparedWith/{{summary.comparisonDateId}}/indicator/{{id}}/existing"><a href="javascript:void()">{{existing}}</a></td>
+            <td class="prominentLink" title="Click to view patients" data-toggle="tooltip" data-container="body" data-placement="left" data-href="/practice/{{summary.practiceId}}/date/{{summary.dateId}}/comparedWith/{{summary.comparisonDateId}}/indicator/{{id}}/new"><a href="javascript:void()">{{new}}</a></td>
             <td>{{trendValue}}</td>
             <td>
               <input type="checkbox" {{isChecked}}checked{{/isChecked}}/>

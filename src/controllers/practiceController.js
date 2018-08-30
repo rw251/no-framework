@@ -66,6 +66,9 @@ export default (callback, practiceId, dateId, comparisonDateId, tabId) => {
           if (p._id === +state.practiceId) {
             p.isSelected = true;
             selectedPractice = p;
+            state.practiceName = p.short_name;
+          } else {
+            delete p.isSelected;
           }
         });
 
@@ -74,6 +77,8 @@ export default (callback, practiceId, dateId, comparisonDateId, tabId) => {
           if (d._id === +state.dateId) {
             d.isSelected = true;
             selectedDate = d;
+          } else {
+            delete d.isSelected;
           }
           d.shouldDisplay = d.value.indexOf('day') < 0;
         });

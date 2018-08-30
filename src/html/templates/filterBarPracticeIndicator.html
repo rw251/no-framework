@@ -9,10 +9,10 @@
   <div class="form-group left-buffer align-bottom">
     <label for="reportType" style="display:block;">Report type:</label>
     <select class="inline-select" id="typeList" name="reportType">
-      <option value="numerator" selected="selected">Affected patients</option>
-      <option value="resolved">Successful intervention</option>
-      <option value="existing">Action pending</option>
-      <option value="new">New cases</option>
+      <option value="affected"{{isAffected}} selected="selected"{{/isAffected}}>Affected patients</option>
+      <option value="resolved"{{isResolved}} selected="selected"{{/isResolved}}>Successful intervention</option>
+      <option value="existing"{{isExisting}} selected="selected"{{/isExisting}}>Action pending</option>
+      <option value="new"{{isNew}} selected="selected"{{/isNew}}>New cases</option>
     </select>
   </div>
   <div class="form-group left-buffer align-bottom">

@@ -8,8 +8,13 @@ import practiceIndicator from './controllers/practiceIndicatorController';
 
 export default [
   { controller: practice, regex: /''/, isDefault: true },
-  { controller: practice, regex: /practice\/(.*)\/date\/(.*)\/comparedWith\/(.*)\/tab\/(.*)/ },
+
+  // /practice/:practiceId/date/:dateId/comparedWith/:comparisonDateId/indicator/:indicatorId/:reportType/tab/:tabId
+  { controller: practiceIndicator, regex: /practice\/(.*)\/date\/(.*)\/comparedWith\/(.*)\/indicator\/(.*)\/(.*)\/tab\/(.*)/ },
+  { controller: practiceIndicator, regex: /practice\/(.*)\/date\/(.*)\/comparedWith\/(.*)\/indicator\/(.*)\/(.*)/ },
   { controller: practiceIndicator, regex: /practice\/(.*)\/date\/(.*)\/comparedWith\/(.*)\/indicator\/(.*)/ },
+
+  { controller: practice, regex: /practice\/(.*)\/date\/(.*)\/comparedWith\/(.*)\/tab\/(.*)/ },
   { controller: practice, regex: /practice/ },
 
   { controller: ccg, regex: /ccg\/?(.*)/ },
