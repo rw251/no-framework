@@ -1,15 +1,11 @@
-<form id="filterBarPractice" class="form-inline">
+<form id="filterBarCcg" class="form-inline">
   <div class="form-group">
-    {{isSinglePractice}}
-    <h2>{{singlePractice.short_name}}</h2>
-    {{/isSinglePractice}}
-    {{!isSinglePractice}}
-    <select class="form-control inline-select selectpicker" id="practiceList" data-live-search="true" data-width="auto" title="Select a practice">
-      {{practices}}
+    <select class="form-control inline-select selectpicker" id="indicatorList" data-live-search="true" data-width="auto">
+      <option value="0" {{isSelected}}selected{{/isSelected}}>All Indicators</option>
+      {{indicators}}
       <option value="{{_id}}" {{isSelected}}selected{{/isSelected}}>{{short_name}}</option>
-      {{/practices}}
+      {{/indicators}}
     </select>
-    {{/isSinglePractice}}
   </div>
   <div class="form-group left-buffer align-bottom">
     <label for="reportDate" style="display:block;">Report date:</label>

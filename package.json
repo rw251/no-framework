@@ -18,7 +18,7 @@
     "eslint": "^5.4.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
-    "fuse-box": "^3.4.0",
+    "fuse-box": "^3.5.0",
     "node-sass": "^4.9.3",
     "typescript": "^2.9.2",
     "uglify-es": "^3.3.10",
@@ -27,10 +27,11 @@
   "dependencies": {
     "bluebird": "^3.5.1",
     "bootstrap": "^3.3.7",
-    "bootstrap-select": "^1.12.4",
+    "bootstrap-select": "^1.13.2",
+    "c3": "^0.6.7",
     "jquery": "^3.3.1",
     "rw-progress": "^1.0.3",
-    "rw-router": "^1.0.6",
-    "rw-templater": "^1.1.1"
+    "rw-router": "^1.1.0",
+    "rw-templater": "^1.1.2"
   }
 }

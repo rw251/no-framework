@@ -1,3 +1,7 @@
+<div class="pull-right">
+  <a class="btn btn-primary" data-href="/practice/{{summary.practiceId}}/date/{{summary.dateId}}/comparedWith/{{summary.comparisonDateId}}/indicator/{{summary.indicatorId}}/{{reportType}}/show/{{showChart}}table{{/showChart}}{{showTable}}chart{{/showTable}}" href="javascript:void()" id="toggleChart" role="button"{{tab1Active}} style="display: none"{{/tab1Active}}{{tab3Active}} style="display: none"{{/tab3Active}}>View as {{showChart}}table{{/showChart}}{{showTable}}chart{{/showTable}}</a>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
   <li {{tab1Active}}class="active"{{/tab1Active}} role="presentation"><a id="tableTab" href="#patients" aria-controls="patients" role="tab" data-toggle="tab" data-id="1">Patients</a></li>
   <li {{tab2Active}}class="active"{{/tab2Active}} role="presentation"><a id="trendTableTab" href="#trend" aria-controls="trend" role="tab" data-toggle="tab" data-id="2">Trend</a></li>
@@ -20,7 +24,7 @@
         </tr>
       </thead>
       <tbody>
-        {{patients}}
+        {{summary.patients}}
         <tr class="no-priority">
           <td data-patient-id="{{id}}">{{nhs}}</td>
           <td>
@@ -49,27 +53,27 @@
             {{isNote}}
             <p>{{patientNote}}</p>
             {{/isNote}}
-            {{indicatorNotes}}
+            {{indicatorNotesToDisplay}}
             <div>
               <p><strong>{{name}}:</strong></p>
               <ul>
                 <li>{{note}}</li>
               </ul>
             </div>
-            {{/indicatorNotes}}
+            {{/indicatorNotesToDisplay}}
             {{isNote}}
             <p><small>Note last updated by {{patientNoteUpdatedBy}} on {{patientNoteUpdatedLocaleString}}</small></p>
             {{/isNote}}
-            {{noNote}}
+            {{!isNote}}
             <button class="btn btn-default" type="button">Add Note</button>
-            {{/noNote}}
+            {{/isNote}}
             {{isNote}}
             <button class="btn btn-default" type="button">Edit Note</button>
             <button class="btn btn-default" type="button">Delete Note</button>
             {{/isNote}}
           </td>
         </tr>
-        {{/patients}}
+        {{/summary.patients}}
       </tbody>
     </table>
     {{/somePatients}}
@@ -77,6 +81,10 @@
   <div class="tab-pane tab-borders fade{{tab2Active}} active in{{/tab2Active}}" id="trend" role="tabpanel">
     <div class="clearfix">
       <div>
+        {{showChart}}
+        <div id="chartPanel"></div>
+        {{/showChart}}
+        {{showTable}}
         <table class="table" id="trendTable">
           <thead>
             <tr>
@@ -86,7 +94,7 @@
             </tr>
           </thead>
           <tbody>
-            {{tableData}}
+            {{summary.tableData}}
             <tr>
               <td>{{date}}</td>
               <td>{{num}}</td>
@@ -95,9 +103,10 @@
                 {{trendValue}}
               </td>
             </tr>
-            {{/tableData}}
+            {{/summary.tableData}}
           </tbody>
         </table>
+        {{/showTable}}
       </div>
     </div>
   </div>

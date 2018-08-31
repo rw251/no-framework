@@ -1,0 +1,74 @@
+<ul class="nav nav-tabs" role="tablist">
+  <li class="active" role="presentation"><a id="tableTab" href="#patients" aria-controls="patients" role="tab" data-toggle="tab" data-id="1">Patients</a></li>
+</ul>
+<div class="tab-content">
+  <div class="tab-pane tab-borders fade active in" id="patients" role="tabpanel">
+    {{!isPatients}}
+    No patients found
+    {{/isPatients}}
+    {{isPatients}}
+    <table class="table" id="patientTable">
+      <thead>
+        <tr>
+          <th tooltip="The patient's NHS number" tooltip-append-to-body="true" tooltip-placement="bottom">NHS number</th>
+          <th tooltip="A list of prescribing safety indicators that the patient is currently affected by" tooltip-append-to-body="true" tooltip-placement="bottom">Indicators breached</th>
+          <th tooltip="The date since which the patient was originally found to be affected by this indicator" tooltip-append-to-body="true" tooltip-placement="bottom">Since</th>
+          <th tooltip="Any notes associated with the patient are displayed here" tooltip-append-to-body="true" tooltip-placement="bottom">Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{patients}}
+        <tr class="no-priority">
+          <td data-patient-id="{{id}}">{{nhs}}</td>
+          <td>
+            <table class="table table-borderless">
+              <tbody>
+                {{indicators}}
+                <tr>
+                  <td tooltip="{{long_name}}" tooltip-append-to-body="true" tooltip-placement="left">{{short_name}}</td>
+                </tr>
+                {{/indicators}}
+              </tbody>
+            </table>
+          </td>
+          <td>
+            <table class="table table-borderless">
+              <tbody>
+                {{indicators}}
+                <tr>
+                  <td>{{since}}</td>
+                </tr>
+                {{/indicators}}
+              </tbody>
+            </table>
+          </td>
+          <td>
+            {{isNote}}
+            <p>{{patientNote}}</p>
+            {{/isNote}}
+            {{indicatorNotes}}
+            <div>
+              <p><strong>{{name}}:</strong></p>
+              <ul>
+                <li>{{note}}</li>
+              </ul>
+            </div>
+            {{/indicatorNotes}}
+            {{isNote}}
+            <p><small>Note last updated by {{patientNoteUpdatedBy}} on {{patientNoteUpdatedLocaleString}}</small></p>
+            {{/isNote}}
+            {{!isNote}}
+            <button class="btn btn-default" type="button">Add Note</button>
+            {{/isNote}}
+            {{isNote}}
+            <button class="btn btn-default" type="button">Edit Note</button>
+            <button class="btn btn-default" type="button">Delete Note</button>
+            {{/isNote}}
+          </td>
+        </tr>
+        {{/patients}}
+      </tbody>
+    </table>
+    {{/isPatients}}
+  </div>
+</div>

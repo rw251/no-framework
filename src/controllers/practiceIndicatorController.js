@@ -2,8 +2,12 @@ import Template from 'rw-templater';
 import state from '../state';
 import api from '../api';
 import { updateActive, updateBreadcrumbs } from './common';
+import { displayPracticeIndicatorChart } from '../charts';
 
-export default (callback, practiceId, dateId, comparisonDateId, indicatorId, reportType, tabId) => {
+export default (
+  callback, practiceId, dateId, comparisonDateId,
+  indicatorId, reportType, chartOrTable, tabId
+) => {
   // always start a progress bar if there is any async
   // behaviour loading the content.
   window.Progress.start();
@@ -18,7 +22,7 @@ export default (callback, practiceId, dateId, comparisonDateId, indicatorId, rep
       api.indicators(),
       api.datesForDisplay(),
     ])
-    .then(([practices, { patients, tableData }, indicators, dates]) => {
+    .then(([practices, summary, indicators, dates]) => {
       // check if the most recently requested page is this
       // otherwise do nothing.
       if (state.latestPageRequestId === localPageRequestId) {
@@ -34,14 +38,20 @@ export default (callback, practiceId, dateId, comparisonDateId, indicatorId, rep
         state.dateId = dateId;
         state.indicatorId = indicatorId;
         state.comparisonDateId = comparisonDateId;
-        state.practiceIndicatorTabId = tabId || 1;
+        state.practiceIndicatorTabId = tabId || state.practiceIndicatorTabId;
+        state.practiceIndicatorChartOrTable = chartOrTable || 'table';
+
+        global.Router.shift(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/indicator/${state.indicatorId}/${state.reportType}/show/${state.practiceIndicatorChartOrTable}/tab/${state.practiceIndicatorTabId}`);
 
         const tab1Active = +state.practiceIndicatorTabId === 1;
         const tab2Active = +state.practiceIndicatorTabId === 2;
         const tab3Active = +state.practiceIndicatorTabId === 3;
 
-        const noPatients = patients.length === 0;
+        const noPatients = summary.patients.length === 0;
         const somePatients = !noPatients;
+
+        const showTable = state.practiceIndicatorChartOrTable === 'table';
+        const showChart = !showTable;
 
         let selectedIndicator;
         indicators.forEach((i) => {
@@ -53,10 +63,9 @@ export default (callback, practiceId, dateId, comparisonDateId, indicatorId, rep
           }
         });
 
-        patients.forEach((p) => {
-          p.isNote = !!p.patientNote || p.indicators.filter(i => p.indicatorNotes
-            .filter(ii => i.id === ii.id).length > 0).length > 0;
-          p.noNote = !p.isNote;
+        summary.patients.forEach((p) => {
+          p.indicatorNotesToDisplay = p.indicatorNotes.filter(note => p.indicators.filter(indicator => indicator.id === note.id).length > 0);
+          p.isNote = !!p.patientNote || p.indicatorNotesToDisplay.length > 0;
         });
 
         practices.forEach((p) => {
@@ -108,10 +117,13 @@ export default (callback, practiceId, dateId, comparisonDateId, indicatorId, rep
           tab1Active,
           tab2Active,
           tab3Active,
+          tabId: state.practiceIndicatorTabId,
           noPatients,
           somePatients,
-          patients,
-          tableData,
+          reportType,
+          summary,
+          showTable,
+          showChart,
           info: selectedIndicator.info,
         });
 
@@ -126,32 +138,60 @@ export default (callback, practiceId, dateId, comparisonDateId, indicatorId, rep
         // cause navigation on the select drop down changing
         document.getElementById('indicatorList').addEventListener('change', (event) => {
           if (event.target.value !== state.indicatorId) {
-            global.Router.navigate(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/indicator/${event.target.value}/${state.reportType}/tab/${state.practiceIndicatorTabId}`);
+            global.Router.navigate(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/indicator/${event.target.value}/${state.reportType}/show/${state.practiceIndicatorChartOrTable}/tab/${state.practiceIndicatorTabId}`);
           }
         });
 
         document.getElementById('typeList').addEventListener('change', (event) => {
           if (event.target.value !== state.reportType) {
-            global.Router.navigate(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/indicator/${state.indicatorId}/${event.target.value}/tab/${state.practiceIndicatorTabId}`);
+            global.Router.navigate(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/indicator/${state.indicatorId}/${event.target.value}/show/${state.practiceIndicatorChartOrTable}/tab/${state.practiceIndicatorTabId}`);
           }
         });
 
         document.getElementById('dateList').addEventListener('change', (event) => {
           if (event.target.value !== state.dateId) {
-            global.Router.navigate(`/practice/${state.practiceId}/date/${event.target.value}/comparedWith/${state.comparisonDateId}/indicator/${state.indicatorId}/${state.reportType}/tab/${state.practiceIndicatorTabId}`);
+            global.Router.navigate(`/practice/${state.practiceId}/date/${event.target.value}/comparedWith/${state.comparisonDateId}/indicator/${state.indicatorId}/${state.reportType}/show/${state.practiceIndicatorChartOrTable}/tab/${state.practiceIndicatorTabId}`);
           }
         });
 
         document.getElementById('dateCompareList').addEventListener('change', (event) => {
           if (event.target.value !== state.comparisonDateId) {
-            global.Router.navigate(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${event.target.value}/indicator/${state.indicatorId}/${state.reportType}/tab/${state.practiceIndicatorTabId}`);
+            global.Router.navigate(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${event.target.value}/indicator/${state.indicatorId}/${state.reportType}/show/${state.practiceIndicatorChartOrTable}/tab/${state.practiceIndicatorTabId}`);
           }
         });
 
         $('li a[role="tab"]').on('shown.bs.tab', (e) => {
           state.practiceIndicatorTabId = $(e.currentTarget).data('id');
-          global.Router.shift(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/indicator/${state.indicatorId}/${state.reportType}/tab/${state.practiceIndicatorTabId}`, true);
+          if (+state.practiceIndicatorTabId === 2) $('#toggleChart').show();
+          else $('#toggleChart').hide();
+          global.Router.shift(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/indicator/${state.indicatorId}/${state.reportType}/show/${state.practiceIndicatorChartOrTable}/tab/${state.practiceIndicatorTabId}`, true);
         });
+
+        const addStartEndDateListeners = () => {
+          document.getElementById('endDate').addEventListener('change', (event) => {
+            if (event.target.value !== state.practiceIndicatorEndDate) {
+              state.practiceIndicatorEndDate = event.target.value;
+              displayPracticeIndicatorChart(summary.chartData, state.practiceIndicatorStartDate, state.practiceIndicatorEndDate);
+              addStartEndDateListeners();
+            }
+          });
+
+          document.getElementById('startDate').addEventListener('change', (event) => {
+            if (event.target.value !== state.practiceIndicatorStartDate) {
+              state.practiceIndicatorStartDate = event.target.value;
+              displayPracticeIndicatorChart(summary.chartData, state.practiceIndicatorStartDate, state.practiceIndicatorEndDate);
+              addStartEndDateListeners();
+            }
+          });
+        };
+
+        // add chart
+        if (state.practiceIndicatorChartOrTable === 'chart') {
+          setTimeout(() => {
+            displayPracticeIndicatorChart(summary.chartData, state.practiceIndicatorStartDate, state.practiceIndicatorEndDate);
+            addStartEndDateListeners();
+          }, 0);
+        }
 
         if (callback) callback();
       }
