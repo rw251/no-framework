@@ -58,6 +58,10 @@ export default (callback, practiceId, dateId, comparisonDateId, tabId) => {
         // ready to display content so make the progress bar complete
           window.Progress.done();
 
+
+          // test for no multiple
+          // summary.summaryData.multiple = 0;
+
           const isSinglePractice = practices.length === 1;
           const singlePractice = practices[0];
 
@@ -112,6 +116,15 @@ export default (callback, practiceId, dateId, comparisonDateId, tabId) => {
             dates,
             comparisonDates,
           });
+
+          summary.tableData.forEach((item) => {
+            item.isNum = !!item.num && item.num > 0;
+            item.isResolved = !!item.resolved && item.resolved > 0;
+            item.isExisting = !!item.existing && item.existing > 0;
+            item.isNew = !!item.new && item.new > 0;
+          });
+
+          summary.isMultiple = !!summary.summaryData.multiple && summary.summaryData.multiple > 0;
 
           const practiceHtml = selectedPractice
             ? Template.it('practiceContent', {

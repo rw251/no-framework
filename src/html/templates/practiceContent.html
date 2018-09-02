@@ -22,9 +22,14 @@
         </tr>
         <tr>
           <th title="Number of patients flagged up by 2 or more indicators" data-toggle="tooltip" data-container="body" data-placement="left">Patients affected by more than one indicator
+            {{summary.isMultiple}}
             <td class="prominentLink" data-href="/practice/{{summary.practiceId}}/date/{{summary.dateId}}/multiple" title="Click to view patients" data-toggle="tooltip" data-container="body" data-placement="left">
               <a href="javascript:void(0)">{{summary.summaryData.multiple}}</a>
             </td>
+            {{/summary.isMultiple}}
+            {{!summary.isMultiple}}
+            <td>0</td>
+            {{/summary.isMultiple}}
           </th>
         </tr>
         <tr>
@@ -56,13 +61,33 @@
           {{summary.tableData}}
           <tr class="no-priority">
             <td title="{{long_name}}" data-toggle="tooltip" data-container="body" data-placement="top">{{short_name}}</td>
+            {{isNum}}
             <td class="prominentLink" title="Click to view patients" data-toggle="tooltip" data-container="body" data-placement="left" data-href="/practice/{{summary.practiceId}}/date/{{summary.dateId}}/comparedWith/{{summary.comparisonDateId}}/indicator/{{id}}/affected"><a href="javascript:void()">{{num}}</a></td>
+            {{/isNum}}
+            {{!isNum}}
+            <td>0</td>
+            {{/isNum}}
             <td>{{denom}}</td>
             <td>{{avg}}</td>
             <td>{{ccg}}</td>
+            {{isResolved}}
             <td class="prominentLink" title="Click to view patients" data-toggle="tooltip" data-container="body" data-placement="left" data-href="/practice/{{summary.practiceId}}/date/{{summary.dateId}}/comparedWith/{{summary.comparisonDateId}}/indicator/{{id}}/resolved"><a href="javascript:void()">{{resolved}}</a></td>
+            {{/isResolved}}
+            {{!isResolved}}
+            <td>0</td>
+            {{/isResolved}}
+            {{isExisting}}
             <td class="prominentLink" title="Click to view patients" data-toggle="tooltip" data-container="body" data-placement="left" data-href="/practice/{{summary.practiceId}}/date/{{summary.dateId}}/comparedWith/{{summary.comparisonDateId}}/indicator/{{id}}/existing"><a href="javascript:void()">{{existing}}</a></td>
+            {{/isExisting}}
+            {{!isExisting}}
+            <td>0</td>
+            {{/isExisting}}
+            {{isNew}}
             <td class="prominentLink" title="Click to view patients" data-toggle="tooltip" data-container="body" data-placement="left" data-href="/practice/{{summary.practiceId}}/date/{{summary.dateId}}/comparedWith/{{summary.comparisonDateId}}/indicator/{{id}}/new"><a href="javascript:void()">{{new}}</a></td>
+            {{/isNew}}
+            {{!isNew}}
+            <td>0</td>
+            {{/isNew}}
             <td>{{trendValue}}</td>
             <td>
               <input type="checkbox" {{isChecked}}checked{{/isChecked}}/>

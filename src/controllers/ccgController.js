@@ -95,13 +95,14 @@ export default (callback, dateId, comparisonDateId, tabId, indicatorId) => {
             comparisonDates,
           });
 
-          const ccgeHtml = Template.it('ccgContent', {
+          const ccgHtml = Template.it('ccgContent', {
             tab1Active,
             tab2Active,
+            isAllIndicators: +state.indicatorId === 0,
             summary,
           });
 
-          document.getElementById('page').innerHTML = filterBarHtml + ccgeHtml;
+          document.getElementById('page').innerHTML = filterBarHtml + ccgHtml;
 
           $('.tooltip').tooltip('hide');
           $('[data-toggle="tooltip"]').tooltip();

@@ -13,13 +13,6 @@
         <thead>
           <tr>
             <th class="pointer" title="The GP practice" data-toggle="tooltip" data-container="body" data-placement="top">Practice</th>
-            {{isAllIndicators}}
-            <th class="pointer" title="The number of patients affected by any one of the prescribing safety indicators across all practices" data-toggle="tooltip" data-container="body" data-placement="top"">Affected patients</th>
-            <th class="pointer" title="Proportion of eligible patients across all practices who are affected by at least one indicator" data-toggle="tooltip" data-container="body" data-placement="top"">% of eligible patients affected</th>
-            <th class="pointer" title="Proportion of eligible patients across practices in this CCG who are affected by at least one indicator" data-toggle="tooltip" data-container="body" data-placement="top"">CCG Avg (%)</th>
-            <th class="pointer" title="The number of patients affected by more than 1 prescribing safety indicator across all practices" data-toggle="tooltip" data-container="body" data-placement="top"">More than one indicator</th>
-            {{/isAllIndicators}}
-            {{!isAllIndicators}}
             <th class="pointer" title="The number of patients affected by this indicator across all practices" data-toggle="tooltip" data-container="body" data-placement="top">Affected patients</th>
             <th class="pointer" title="The population of patients across all practices that this indicator could affect" data-toggle="tooltip" data-container="body" data-placement="top">Eligible patients</th>
             <th class="pointer" title="Proportion of the population in focus that are affected by this indicator across all practices" data-toggle="tooltip" data-container="body" data-placement="top">% of eligible patients affected</th>
@@ -29,7 +22,6 @@
             <th class="pointer" title="Patients who remain affected by this indicator since the last comparison date" data-toggle="tooltip" data-container="body" data-placement="top">Action pending</th>
             <th class="pointer" title="Patients affected by this indicator who weren't affected on the last comparison date" data-toggle="tooltip" data-container="body" data-placement="top">New cases</th>
             <th class="pointer" title="Difference in the number of affected patients between last comparison date and current" data-toggle="tooltip" data-container="body" data-placement="top">Trend</th>
-            {{/isAllIndicators}}
             <th class="pointer" title="Keeps this practice on top row of the table even when you sort the columns" data-toggle="tooltip" data-container="body" data-placement="top">Show on top</th>
           </tr>
         </thead>
@@ -38,12 +30,6 @@
           <tr class="no-priority">
             <td class="prominentLink" title="Click to view practice" data-toggle="tooltip" data-container="body" data-placement="left" data-href="/practice/{{id}}/date/{{summary.dateId}}/comparedWith/{{summary.comparisonDateId}}/tab/undefined"><a href="javascript:void(0)">{{short_name}}</a></td>
             <td>{{num}}</td>
-            {{isAllIndicators}}
-            <td>{{avg}}</td>
-            <td>{{ccg}}</td>
-            <td>{{patientsMultiple}}</td>
-            {{/isAllIndicators}}
-            {{!isAllIndicators}}
             <td>{{denom}}</td>
             <td>{{avg}}</td>
             <td>{{ccg}}</td>
@@ -52,7 +38,6 @@
             <td>{{existing}}</td>
             <td>{{new}}</td>
             <td>{{trendValue}}</td>
-            {{/isAllIndicators}}
             <td>
               <input type="checkbox" />
             </td>
