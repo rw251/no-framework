@@ -1,0 +1,21 @@
+{{isNote}}
+<p>{{patientNote}}</p>
+{{/isNote}}
+{{indicatorNotesToDisplay}}
+<div>
+  <p><strong>{{name}}:</strong></p>
+  <ul>
+    <li>{{note}}</li>
+  </ul>
+</div>
+{{/indicatorNotesToDisplay}}
+{{isNote}}
+<p><small>Note last updated by {{patientNoteUpdatedBy}} on {{patientNoteUpdatedLocaleString}}</small></p>
+{{/isNote}}
+{{!isNote}}
+<button class="btn btn-default" data-type="add" data-patient-id="{{id}}" type="button">Add Note</button>
+{{/isNote}}
+{{isNote}}
+<button class="btn btn-default" data-type="edit" data-patient-id="{{id}}" type="button">Edit Note</button>
+<button class="btn btn-default" data-type="delete" data-patient-id="{{id}}" type="button">Delete Note</button>
+{{/isNote}}

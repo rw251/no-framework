@@ -1,0 +1,29 @@
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close"><span aria-hidden="true" class="close-me">&times;</span></button>
+      <h4 class="modal-title" id="myModalLabel">Patient {{patient.nhs}}</h4>
+    </div>
+    <div class="modal-body">
+      <p><strong class="text-danger">NB: Please don't enter patient identifiable information such as name, address, date of birth or NHS number in this form.</strong></p>
+      <h4>Patient notes <small style="font-style: italic;">Notes specific to the patient, but not a particular indicator</small></h4>
+      <textarea id="patientNote" class="form-control" rows="3">{{patient.patientNote}}</textarea>
+      <hr>
+      <h4>Indicator notes <small style="font-style: italic;">Notes specific to this patient and a particular indicator</small></h4>
+      <form class="form-horizontal">
+        {{patient.indicators}}
+        <div class="form-group">
+          <label for="ind{{id}}" class="col-sm-4 control-label">{{short_name}}</label>
+          <div class="col-sm-8">
+            <textarea class="form-control indicator-note" data-indicator-id="{{id}}" data-indicator-name="{{short_name}}" id="ind{{id}}" rows="2">{{note}}</textarea>
+          </div>
+        </div>
+        {{/patient.indicators}}
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" data-patient-id="{{patient.id}}">Save changes</button>
+      <button type="button" class="btn btn-default close-me">Close</button>
+    </div>
+  </div>
+</div>

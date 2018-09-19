@@ -49,7 +49,7 @@
               </tbody>
             </table>
           </td>
-          <td>
+          <td data-patient-id="{{id}}" class="note-field">
             {{isNote}}
             <p>{{patientNote}}</p>
             {{/isNote}}
@@ -65,11 +65,11 @@
             <p><small>Note last updated by {{patientNoteUpdatedBy}} on {{patientNoteUpdatedLocaleString}}</small></p>
             {{/isNote}}
             {{!isNote}}
-            <button class="btn btn-default" type="button">Add Note</button>
+            <button class="btn btn-default" data-type="add" data-patient-id="{{id}}" type="button">Add Note</button>
             {{/isNote}}
             {{isNote}}
-            <button class="btn btn-default" type="button">Edit Note</button>
-            <button class="btn btn-default" type="button">Delete Note</button>
+            <button class="btn btn-default" data-type="edit" data-patient-id="{{id}}" type="button">Edit Note</button>
+            <button class="btn btn-default" data-type="delete" data-patient-id="{{id}}" type="button">Delete Note</button>
             {{/isNote}}
           </td>
         </tr>
