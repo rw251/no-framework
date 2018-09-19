@@ -2,6 +2,7 @@ import Template from 'rw-templater';
 import state from '../state';
 import api from '../api';
 import { updateActive, updateBreadcrumbs } from './common';
+import modal from './modalController';
 
 export default (callback, practiceId, dateId) => {
   // always start a progress bar if there is any async
@@ -53,9 +54,20 @@ export default (callback, practiceId, dateId) => {
           d.shouldDisplay = d.value.indexOf('day') < 0;
         });
 
+        const patientLookup = {};
         patients.forEach((p) => {
-          p.isNote = !!p.patientNote || p.indicators.filter(i => p.indicatorNotes
-            .filter(ii => i.id === ii.id).length > 0).length > 0;
+          p.indicatorNotesToDisplay = p.indicatorNotes.filter(note => p.indicators.filter(indicator => indicator.id === note.id).length > 0);
+          p.isNote = !!p.patientNote || p.indicatorNotesToDisplay.length > 0;
+          p.indicators.forEach((indicator) => {
+            indicator.note = '';
+            p.indicatorNotes.forEach((note) => {
+              if (note.id === indicator.id) {
+                indicator.note = note.note;
+              }
+            });
+          });
+          p.patientNote = p.patientNote || '';
+          patientLookup[p.id] = p;
         });
 
         updateActive('tab-practice');
@@ -88,6 +100,8 @@ export default (callback, practiceId, dateId) => {
             global.Router.navigate(`/practice/${state.practiceId}/date/${event.target.value}/multiple`);
           }
         });
+
+        modal.initialize(patientLookup);
       }
 
       if (callback) callback();
