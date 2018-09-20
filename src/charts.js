@@ -56,6 +56,100 @@ const singlePracticeTrend = (bindto, data, yLabel) => {
   });
 };
 
+const ccgAllIndicatorsAtRisk = (bindto, data) => {
+  c3.generate({
+    bindto,
+    size: { height: 400 },
+    data, // $scope.getPatientsAtRiskChartData($scope.sortedPatientsAtRiskData, true),
+    axis: {
+      x: {
+        type: 'category',
+        tick: {
+          rotate: 60,
+          multiline: false,
+        },
+      },
+      y: {
+        label: {
+          text: '% of eligible patients affected',
+          position: 'outer-middle',
+        },
+      },
+    },
+    grid: { y: { show: true } },
+  });
+};
+
+const ccgAllIndicatorsMultiple = (bindto, data) => {
+  c3.generate({
+    bindto,
+    size: { height: 400 },
+    data, // $scope.getPatientsMultipleChartData($scope.sortedPatientsMultipleData, true),
+    axis: {
+      x: {
+        type: 'category',
+        tick: {
+          rotate: 60,
+          multiline: false,
+        },
+      },
+      y: {
+        label: {
+          text: 'Number of patients affected',
+          position: 'outer-middle',
+        },
+      },
+    },
+    grid: { y: { show: true } },
+  });
+};
+
+const ccgSingleIndicatorAtRisk = (bindto, data) => {
+  c3.generate({
+    bindto,
+    size: { height: 400 },
+    data, // $scope.getPatientsAtRiskChartData($scope.sortedPatientsAtRiskData, true),
+    axis: {
+      x: {
+        type: 'category',
+        tick: {
+          rotate: 60,
+          multiline: false,
+        },
+      },
+      y: {
+        label: {
+          text: '% of eligible patients affected',
+          position: 'outer-middle',
+        },
+      },
+    },
+    grid: { y: { show: true } },
+  });
+};
+
+const atRiskChartData = (data, name) => {
+  const rtn = {};
+  const json = [];
+
+  for (let i = 0; i < data.length; i += 1) {
+    const item = data[i];
+    json.push({ x: item.short_name, indicator: item.avg.toFixed(2) });
+  }
+
+  rtn.json = json;
+  rtn.keys = { x: 'x', value: ['indicator'] };
+
+  // if (isGenerate) {
+  //   rtn.onclick = $scope.patientsAtRiskChartSelectHandler;
+  rtn.type = 'bar';
+  rtn.names = { indicator: name };
+  rtn.colors = { indicator: 'red' };
+  // }
+
+  return rtn;
+};
+
 const comparisonChartData = (tableData) => {
   const chartData = {
     keys: { x: 'x', value: ['ccg', 'practice'] },
@@ -131,6 +225,48 @@ const doDates = (start, end, trendData) => {
   return { endDates, startDates, endDate, startDate };
 };
 
+const displayCCGChart = (id, data, start, end) => {
+  // determine the valid dates for the start/end dropdowns
+  const { endDates, startDates, startDate, endDate } = doDates(start, end, data.trendChartData[+id === 1 ? 'num' : 'avg']);
+  const areDates = [1, 2, 6].indexOf(+id) < 0;
+
+  // create chart panel
+  const chartContainerHtml = Template.it('chartContainer', {
+    startDates,
+    endDates,
+    areDates,
+    startDate,
+    endDate,
+  });
+  $('#chartPanel').html(chartContainerHtml);
+
+  switch (+id) {
+    case 1:
+      ccgAllIndicatorsAtRisk('#chart', atRiskChartData(data.tableData, 'All indicators'));
+      break;
+    case 2:
+      ccgAllIndicatorsMultiple('#chart', trendChartData(data.tableData, startDate, endDate));
+      break;
+    case 3:
+      singlePracticeTrend('#chart', trendChartData(data.trendChartData.num, startDate, endDate), 'Number of affected patients');
+      break;
+    case 4:
+      singlePracticeTrend('#chart', trendChartData(data.trendChartData.avg, startDate, endDate), '% of eligible patients affected');
+      break;
+    case 5:
+      singlePracticeTrend('#chart', trendChartData(data.trendChartData.patientsMultiple, startDate, endDate), 'Patients affected by more than one indicator');
+      break;
+    case 6:
+      ccgSingleIndicatorAtRisk('#chart', atRiskChartData(data.tableData, data.indicator.short_name));
+      break;
+    case 7:
+      singlePracticeTrend('#chart', trendChartData(data.trendChartData.num, startDate, endDate), 'Number of affected patients');
+      break;
+    default:
+      singlePracticeTrend('#chart', trendChartData(data.trendChartData.avg, startDate, endDate), '% of eligible patients affected');
+  }
+};
+
 const displaySinglePracticeChart = (id, data, start, end) => {
   // determine the valid dates for the start/end dropdowns
   const { endDates, startDates, startDate, endDate } = doDates(start, end, data.trendChartData[+id === 1 ? 'num' : 'avg']);
@@ -173,4 +309,4 @@ const displayPracticeIndicatorChart = (data, start, end) => {
 };
 
 
-export { displaySinglePracticeChart, displayPracticeIndicatorChart };
+export { displaySinglePracticeChart, displayPracticeIndicatorChart, displayCCGChart };

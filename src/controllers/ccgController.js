@@ -2,8 +2,9 @@ import Template from 'rw-templater';
 import state from '../state';
 import api from '../api';
 import { updateActive, updateBreadcrumbs } from './common';
+import { displayCCGChart } from '../charts';
 
-export default (callback, dateId, comparisonDateId, tabId, indicatorId) => {
+export default (callback, dateId, comparisonDateId, tabId, indicatorId, chartId) => {
   window.Progress.start();
   state.latestPageRequestId = Math.random();
   const localPageRequestId = state.latestPageRequestId;
@@ -35,7 +36,13 @@ export default (callback, dateId, comparisonDateId, tabId, indicatorId) => {
       state.ccgTabId = 1;
     }
 
-    global.Router.shift(`/ccg/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.ccgTabId}/indicator/${state.indicatorId}`);
+    if (chartId && chartId !== 'undefined') {
+      state.ccgChartId = chartId;
+    } else if (!state.ccgChartId) {
+      state.ccgChartId = 0;
+    }
+
+    global.Router.shift(`/ccg/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.ccgTabId}/indicator/${state.indicatorId}/chart/${state.ccgChartId}`);
 
     Promise
       .all([
@@ -48,11 +55,22 @@ export default (callback, dateId, comparisonDateId, tabId, indicatorId) => {
           const tab1Active = +state.ccgTabId === 1;
           const tab2Active = +state.ccgTabId === 2;
 
+          const chart1Active = +state.ccgChartId === 1;
+          const chart2Active = +state.ccgChartId === 2;
+          const chart3Active = +state.ccgChartId === 3;
+          const chart4Active = +state.ccgChartId === 4;
+          const chart5Active = +state.ccgChartId === 5;
+          const chart6Active = +state.ccgChartId === 6;
+          const chart7Active = +state.ccgChartId === 7;
+          const chart8Active = +state.ccgChartId === 8;
+
+          delete summary.indicator;
           let selectedIndicator;
           indicators.forEach((p) => {
             if (p._id === +state.indicatorId) {
               p.isSelected = true;
               selectedIndicator = p;
+              summary.indicator = selectedIndicator;
               state.indicatorName = p.short_name;
             } else {
               delete p.isSelected;
@@ -100,6 +118,14 @@ export default (callback, dateId, comparisonDateId, tabId, indicatorId) => {
             tab2Active,
             isAllIndicators: +state.indicatorId === 0,
             summary,
+            chart1Active,
+            chart2Active,
+            chart3Active,
+            chart4Active,
+            chart5Active,
+            chart6Active,
+            chart7Active,
+            chart8Active,
           });
 
           document.getElementById('page').innerHTML = filterBarHtml + ccgHtml;
@@ -113,23 +139,73 @@ export default (callback, dateId, comparisonDateId, tabId, indicatorId) => {
           // cause navigation on the select drop down changing
           document.getElementById('indicatorList').addEventListener('change', (event) => {
             if (event.target.value !== state.indicatorId) {
-              global.Router.navigate(`/ccg/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.ccgTabId}/indicator/${event.target.value}`);
+              global.Router.navigate(`/ccg/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.ccgTabId}/indicator/${event.target.value}/chart/${state.ccgChartId}`);
             }
           });
           document.getElementById('dateList').addEventListener('change', (event) => {
             if (event.target.value !== state.dateId) {
-              global.Router.navigate(`/ccg/date/${event.target.value}/comparedWith/${state.comparisonDateId}/tab/${state.ccgTabId}/indicator/${state.indicatorId}`);
+              global.Router.navigate(`/ccg/date/${event.target.value}/comparedWith/${state.comparisonDateId}/tab/${state.ccgTabId}/indicator/${state.indicatorId}/chart/${state.ccgChartId}`);
             }
           });
           document.getElementById('dateCompareList').addEventListener('change', (event) => {
             if (event.target.value !== state.comparisonDateId) {
-              global.Router.navigate(`/ccg/date/${state.dateId}/comparedWith/${event.target.value}/tab/${state.ccgTabId}/indicator/${state.indicatorId}`);
+              global.Router.navigate(`/ccg/date/${state.dateId}/comparedWith/${event.target.value}/tab/${state.ccgTabId}/indicator/${state.indicatorId}/chart/${state.ccgChartId}`);
             }
           });
+          const chart = document.getElementById('id_chart');
+          if (chart) {
+            chart.addEventListener('change', (event) => {
+              if (event.target.value !== state.ccgChartId) {
+                global.Router.navigate(`/ccg/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.ccgTabId}/indicator/${state.indicatorId}/chart/${event.target.value}`);
+              }
+            });
+          }
+
+          const addStartEndDateListeners = () => {
+            const endDateElement = document.getElementById('endDate');
+            if (endDateElement) {
+              endDateElement.addEventListener('change', (event) => {
+                if (event.target.value !== state.practiceChartEndDate) {
+                  state.practiceChartEndDate = event.target.value;
+                  displayCCGChart(
+                    state.ccgChartId,
+                    summary,
+                    state.practiceChartStartDate,
+                    state.practiceChartEndDate
+                  );
+                  addStartEndDateListeners();
+                }
+              });
+            }
+
+            const startDateElement = document.getElementById('startDate');
+            if (startDateElement) {
+              startDateElement.addEventListener('change', (event) => {
+                if (event.target.value !== state.practiceChartStartDate) {
+                  state.practiceChartStartDate = event.target.value;
+                  displayCCGChart(
+                    state.ccgChartId,
+                    summary,
+                    state.practiceChartStartDate,
+                    state.practiceChartEndDate
+                  );
+                  addStartEndDateListeners();
+                }
+              });
+            }
+          };
+
+          // add chart
+          if (+state.ccgChartId) {
+            setTimeout(() => {
+              displayCCGChart(state.ccgChartId, summary);
+              addStartEndDateListeners();
+            }, 0);
+          }
 
           $('li a[role="tab"]').on('shown.bs.tab', (e) => {
             state.ccgTabId = $(e.currentTarget).data('id');
-            global.Router.shift(`/ccg/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.ccgTabId}/indicator/${state.indicatorId}`, true);
+            global.Router.shift(`/ccg/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.ccgTabId}/indicator/${state.indicatorId}/chart/${state.ccgChartId}`, true);
           });
         }
 

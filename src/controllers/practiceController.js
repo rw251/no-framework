@@ -50,7 +50,7 @@ export default (callback, practiceId, dateId, comparisonDateId, tabId, chartId) 
       if (chartId && chartId !== 'undefined') {
         state.practiceChartId = chartId;
       } else if (!state.practiceChartId) {
-        state.practiceChartId = 1;
+        state.practiceChartId = 0;
       }
 
       // changes url from /practice to /practice/:practiceId but
@@ -176,32 +176,51 @@ export default (callback, practiceId, dateId, comparisonDateId, tabId, chartId) 
               global.Router.navigate(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${event.target.value}/tab/${state.practiceTabId}/chart/${state.practiceChartId}`);
             }
           });
-          document.getElementById('id_chart').addEventListener('change', (event) => {
-            if (event.target.value !== state.practiceChartId) {
-              global.Router.navigate(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}/chart/${event.target.value}`);
-            }
-          });
+          const chart = document.getElementById('id_chart');
+          if (chart) {
+            chart.addEventListener('change', (event) => {
+              if (event.target.value !== state.practiceChartId) {
+                global.Router.navigate(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}/chart/${event.target.value}`);
+              }
+            });
+          }
 
           const addStartEndDateListeners = () => {
-            document.getElementById('endDate').addEventListener('change', (event) => {
-              if (event.target.value !== state.practiceChartEndDate) {
-                state.practiceChartEndDate = event.target.value;
-                displaySinglePracticeChart(state.practiceChartId, summary, state.practiceChartStartDate, state.practiceChartEndDate);
-                addStartEndDateListeners();
-              }
-            });
+            const endDateElement = document.getElementById('endDate');
+            if (endDateElement) {
+              endDateElement.addEventListener('change', (event) => {
+                if (event.target.value !== state.practiceChartEndDate) {
+                  state.practiceChartEndDate = event.target.value;
+                  displaySinglePracticeChart(
+                    state.practiceChartId,
+                    summary,
+                    state.practiceChartStartDate,
+                    state.practiceChartEndDate
+                  );
+                  addStartEndDateListeners();
+                }
+              });
+            }
 
-            document.getElementById('startDate').addEventListener('change', (event) => {
-              if (event.target.value !== state.practiceChartStartDate) {
-                state.practiceChartStartDate = event.target.value;
-                displaySinglePracticeChart(state.practiceChartId, summary, state.practiceChartStartDate, state.practiceChartEndDate);
-                addStartEndDateListeners();
-              }
-            });
+            const startDateElement = document.getElementById('startDate');
+            if (startDateElement) {
+              startDateElement.addEventListener('change', (event) => {
+                if (event.target.value !== state.practiceChartStartDate) {
+                  state.practiceChartStartDate = event.target.value;
+                  displaySinglePracticeChart(
+                    state.practiceChartId,
+                    summary,
+                    state.practiceChartStartDate,
+                    state.practiceChartEndDate
+                  );
+                  addStartEndDateListeners();
+                }
+              });
+            }
           };
 
           // add chart
-          if (state.practiceChartId) {
+          if (+state.practiceChartId) {
             setTimeout(() => {
               displaySinglePracticeChart(state.practiceChartId, summary);
               addStartEndDateListeners();

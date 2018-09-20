@@ -22,6 +22,7 @@ export default [
   { controller: practice, regex: /practice\/(.*)\/date\/(.*)\/comparedWith\/(.*)\/tab\/(.*)/ },
   { controller: practice, regex: /practice/ },
 
+  { controller: ccg, regex: /ccg\/date\/(.*)\/comparedWith\/(.*)\/tab\/(.*)\/indicator\/(.*)\/chart\/(.*)/ },
   { controller: ccg, regex: /ccg\/date\/(.*)\/comparedWith\/(.*)\/tab\/(.*)\/indicator\/(.*)/ },
   { controller: ccg, regex: /ccg\/date\/(.*)\/comparedWith\/(.*)\/tab\/(.*)/ },
   { controller: ccg, regex: /ccg/ },
