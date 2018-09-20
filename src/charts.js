@@ -131,27 +131,27 @@ const doDates = (start, end, trendData) => {
   return { endDates, startDates, endDate, startDate };
 };
 
-const displaySinglePracticeChart = (id, data) => {
+const displaySinglePracticeChart = (id, data, start, end) => {
   // determine the valid dates for the start/end dropdowns
-  const { endDates, startDates } = doDates(data, data.trendChartData[+id === 1 ? 'num' : 'avg']);
-  const areDates = false;
+  const { endDates, startDates, startDate, endDate } = doDates(start, end, data.trendChartData[+id === 1 ? 'num' : 'avg']);
+  const areDates = +id !== 1;
 
   // create chart panel
   const chartContainerHtml = Template.it('chartContainer', {
-    areDates,
     startDates,
     endDates,
-    startDate: data.startDate,
-    endDate: data.endDate,
+    areDates,
+    startDate,
+    endDate,
   });
   $('#chartPanel').html(chartContainerHtml);
 
   switch (+id) {
-    case 1:
-      singlePracticeTrend('#chart', trendChartData(data.trendChartData.num, data.startDate, data.endDate), 'Number of affected patients');
-      break;
     case 2:
-      singlePracticeTrend('#chart', trendChartData(data.trendChartData.avg, data.startDate, data.endDate), '% of eligible patients affected');
+      singlePracticeTrend('#chart', trendChartData(data.trendChartData.num, startDate, endDate), 'Number of affected patients');
+      break;
+    case 3:
+      singlePracticeTrend('#chart', trendChartData(data.trendChartData.avg, startDate, endDate), '% of eligible patients affected');
       break;
     default:
       singlePracticeComparison('#chart', comparisonChartData(data.tableData));

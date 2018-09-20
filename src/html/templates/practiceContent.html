@@ -101,9 +101,9 @@
   <div class="tab-pane tab-borders fade{{tab3Active}} active in{{/tab3Active}}" id="charts" role="tabpanel">
     <div style="padding:10px;">
       <select class="selectpicker" id="id_chart" data-width="auto" title="Please select a chart to view...">
-        <option value="0">Proportion of eligible patients affected</option>
-        <option value="1">Number of affected patients over time</option>
-        <option value="2">Proportion of eligible patients affected over time</option>
+        <option value="1" {{chart1Active}}selected{{/chart1Active}}>Proportion of eligible patients affected</option>
+        <option value="2" {{chart2Active}}selected{{/chart2Active}}>Number of affected patients over time</option>
+        <option value="3" {{chart3Active}}selected{{/chart3Active}}>Proportion of eligible patients affected over time</option>
       </select>
     </div>
     <div id="chartPanel"></div>

@@ -2,8 +2,9 @@ import Template from 'rw-templater';
 import state from '../state';
 import api from '../api';
 import { updateActive, updateBreadcrumbs } from './common';
+import { displaySinglePracticeChart } from '../charts';
 
-export default (callback, practiceId, dateId, comparisonDateId, tabId) => {
+export default (callback, practiceId, dateId, comparisonDateId, tabId, chartId) => {
   // always start a progress bar if there is any async
   // behaviour loading the content.
   window.Progress.start();
@@ -46,10 +47,16 @@ export default (callback, practiceId, dateId, comparisonDateId, tabId) => {
         state.practiceTabId = 1;
       }
 
+      if (chartId && chartId !== 'undefined') {
+        state.practiceChartId = chartId;
+      } else if (!state.practiceChartId) {
+        state.practiceChartId = 1;
+      }
+
       // changes url from /practice to /practice/:practiceId but
       // ensures the history is correct. E.g. back goes to the thing
       // before /practice was called
-      global.Router.shift(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}`);
+      global.Router.shift(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}/chart/${state.practiceChartId}`);
 
       api.summary(state.practiceId, state.dateId, state.comparisonDateId).then((summary) => {
         // check if the most recently requested page is this
@@ -68,6 +75,10 @@ export default (callback, practiceId, dateId, comparisonDateId, tabId) => {
           const tab1Active = +state.practiceTabId === 1;
           const tab2Active = +state.practiceTabId === 2;
           const tab3Active = +state.practiceTabId === 3;
+
+          const chart1Active = +state.practiceChartId === 1;
+          const chart2Active = +state.practiceChartId === 2;
+          const chart3Active = +state.practiceChartId === 3;
 
           let selectedPractice;
           practices.forEach((p) => {
@@ -132,6 +143,9 @@ export default (callback, practiceId, dateId, comparisonDateId, tabId) => {
               tab2Active,
               tab3Active,
               summary,
+              chart1Active,
+              chart2Active,
+              chart3Active,
             })
             : '';
 
@@ -148,24 +162,55 @@ export default (callback, practiceId, dateId, comparisonDateId, tabId) => {
           if (practiceList) {
             practiceList.addEventListener('change', (event) => {
               if (event.target.value !== state.practiceId) {
-                global.Router.navigate(`/practice/${event.target.value}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}`);
+                global.Router.navigate(`/practice/${event.target.value}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}/chart/${state.practiceChartId}`);
               }
             });
           }
           document.getElementById('dateList').addEventListener('change', (event) => {
             if (event.target.value !== state.dateId) {
-              global.Router.navigate(`/practice/${state.practiceId}/date/${event.target.value}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}`);
+              global.Router.navigate(`/practice/${state.practiceId}/date/${event.target.value}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}/chart/${state.practiceChartId}`);
             }
           });
           document.getElementById('dateCompareList').addEventListener('change', (event) => {
             if (event.target.value !== state.comparisonDateId) {
-              global.Router.navigate(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${event.target.value}/tab/${state.practiceTabId}`);
+              global.Router.navigate(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${event.target.value}/tab/${state.practiceTabId}/chart/${state.practiceChartId}`);
+            }
+          });
+          document.getElementById('id_chart').addEventListener('change', (event) => {
+            if (event.target.value !== state.practiceChartId) {
+              global.Router.navigate(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}/chart/${event.target.value}`);
             }
           });
 
+          const addStartEndDateListeners = () => {
+            document.getElementById('endDate').addEventListener('change', (event) => {
+              if (event.target.value !== state.practiceChartEndDate) {
+                state.practiceChartEndDate = event.target.value;
+                displaySinglePracticeChart(state.practiceChartId, summary, state.practiceChartStartDate, state.practiceChartEndDate);
+                addStartEndDateListeners();
+              }
+            });
+
+            document.getElementById('startDate').addEventListener('change', (event) => {
+              if (event.target.value !== state.practiceChartStartDate) {
+                state.practiceChartStartDate = event.target.value;
+                displaySinglePracticeChart(state.practiceChartId, summary, state.practiceChartStartDate, state.practiceChartEndDate);
+                addStartEndDateListeners();
+              }
+            });
+          };
+
+          // add chart
+          if (state.practiceChartId) {
+            setTimeout(() => {
+              displaySinglePracticeChart(state.practiceChartId, summary);
+              addStartEndDateListeners();
+            }, 0);
+          }
+
           $('li a[role="tab"]').on('shown.bs.tab', (e) => {
             state.practiceTabId = $(e.currentTarget).data('id');
-            global.Router.shift(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}`, true);
+            global.Router.shift(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}/chart/${state.practiceChartId}`, true);
           });
         }
 

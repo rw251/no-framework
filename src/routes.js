@@ -18,6 +18,7 @@ export default [
   { controller: practiceIndicator, regex: /practice\/(.*)\/date\/(.*)\/comparedWith\/(.*)\/indicator\/(.*)\/(.*)/ },
   { controller: practiceIndicator, regex: /practice\/(.*)\/date\/(.*)\/comparedWith\/(.*)\/indicator\/(.*)/ },
 
+  { controller: practice, regex: /practice\/(.*)\/date\/(.*)\/comparedWith\/(.*)\/tab\/(.*)\/chart\/(.*)/ },
   { controller: practice, regex: /practice\/(.*)\/date\/(.*)\/comparedWith\/(.*)\/tab\/(.*)/ },
   { controller: practice, regex: /practice/ },
 
