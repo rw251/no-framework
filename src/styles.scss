@@ -1,7 +1,18 @@
 @import "~bootstrap/dist/css/bootstrap";
 @import "~bootstrap-select/dist/css/bootstrap-select";
 @import "~c3/c3";
+@import "~datatables.net-bs/css/dataTables.bootstrap";
 
+// Need to overwrite the font-face from bootstrap as it assumes
+// the css is in a certain place relative to the fonts directory
+// however we're packaging it up with fuse so need the absolute
+// urls
+@font-face {
+  font-family: 'Glyphicons Halflings';
+
+  src: url('/fonts/glyphicons-halflings-regular.eot');
+  src: url('/fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('/fonts/glyphicons-halflings-regular.woff2') format('woff2'), url('/fonts/glyphicons-halflings-regular.woff') format('woff'), url('/fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+}
 /*
   Force full width & height.
 

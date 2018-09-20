@@ -14,6 +14,10 @@ window.jQuery = $;
 window.Progress = Progress;
 require('bootstrap');
 require('bootstrap-select');
+require('datatables.net-bs')(window, $);
+require('datatables.net-buttons-bs')(window, $);
+require('datatables.net-buttons/js/buttons.colVis.js')(window, $);
+require('datatables.net-buttons/js/buttons.html5.js')(window, $);
 
 global.Router = Router;
 

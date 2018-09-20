@@ -185,6 +185,15 @@ export default (callback, practiceId, dateId, comparisonDateId, tabId, chartId) 
             });
           }
 
+          const table = $('#indicatorTable').DataTable({
+            info: false, // we don't want showing 1 to n of n
+            searching: false, // we don't want a search box
+            stateSave: true, // let's remember which page/sorting etc
+            paging: false, // always want all indicators
+            scrollY: '50vh',
+            scrollCollapse: true,
+          });
+
           const addStartEndDateListeners = () => {
             const endDateElement = document.getElementById('endDate');
             if (endDateElement) {
@@ -227,9 +236,18 @@ export default (callback, practiceId, dateId, comparisonDateId, tabId, chartId) 
             }, 0);
           }
 
+          $('#tableTab').on('hidden.bs.tab', () => {
+            // $exportButton.hide(); // only want export button on table tab
+          });
+
           $('li a[role="tab"]').on('shown.bs.tab', (e) => {
             state.practiceTabId = $(e.currentTarget).data('id');
             global.Router.shift(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}/chart/${state.practiceChartId}`, true);
+
+            if (e.currentTarget.id === 'tableTab') {
+              table.columns.adjust().draw(false); // ensure headers display correctly on hidden tab
+              // $exportButton.show(); // only want export button on table tab
+            }
           });
         }
 
