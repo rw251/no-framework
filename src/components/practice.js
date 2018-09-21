@@ -1,5 +1,4 @@
 import Template from 'rw-templater';
-import './about.scss';
 
 export default function (callback) {
   document.querySelector('a.active').classList.remove('active');

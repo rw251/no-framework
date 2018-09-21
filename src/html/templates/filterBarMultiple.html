@@ -1,0 +1,12 @@
+<form id="filterBarPractice" class="form-inline">
+  <div class="form-group left-buffer align-bottom">
+    <label for="reportDate" style="display:block;">Report date:</label>
+    <select class="inline-select" id="dateList" name="reportDate">
+      {{dates}}
+      {{shouldDisplay}}
+      <option value="{{_id}}" {{isSelected}}selected{{/isSelected}}>{{value}}</option>
+      {{/shouldDisplay}}
+      {{/dates}}
+    </select>
+  </div>
+</form>

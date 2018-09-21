@@ -1,0 +1,111 @@
+<div class="pull-right">
+  <button class="btn btn-primary" id="export" type="button" style="display:none;">Export</button>
+</div>
+<ul class="nav nav-tabs" role="tablist">
+  <li {{tab1Active}}class="active"{{/tab1Active}} role="presentation"><a href="#summary" aria-controls="summary" role="tab" data-toggle="tab" data-id="1">Practice summary</a></li>
+  <li {{tab2Active}}class="active"{{/tab2Active}} role="presentation"><a id="tableTab" href="#table" aria-controls="table" role="tab" data-toggle="tab" data-id="2">Table</a></li>
+  <li {{tab3Active}}class="active"{{/tab3Active}} role="presentation"><a href="#charts" aria-controls="charts" role="tab" data-toggle="tab" data-id="3">Charts</a></li>
+</ul>
+<div class="tab-content">
+  <div class="tab-pane tab-borders fade{{tab1Active}} active in{{/tab1Active}}" id="summary" role="tabpanel">
+    <table class="table table-narrow right-border">
+      <thead>
+        <tr>
+          <th title="Number of patients in the practice" data-toggle="tooltip" data-container="body" data-placement="left" style="border-bottom-width:1px;">Practice size</th>
+          <td>{{summary.summaryData.practiceSize}}</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th title="Number of patients flagged up by at least one of the indicators" data-toggle="tooltip" data-container="body" data-placement="left">Patients affected by at least one indicator</th>
+          <td>{{summary.summaryData.totalPatients}}</td>
+        </tr>
+        <tr>
+          <th title="Number of patients flagged up by 2 or more indicators" data-toggle="tooltip" data-container="body" data-placement="left">Patients affected by more than one indicator
+            {{summary.isMultiple}}
+            <td class="prominentLink" data-href="/practice/{{summary.practiceId}}/date/{{summary.dateId}}/multiple" title="Click to view patients" data-toggle="tooltip" data-container="body" data-placement="left">
+              <a href="javascript:void(0)">{{summary.summaryData.multiple}}</a>
+            </td>
+            {{/summary.isMultiple}}
+            {{!summary.isMultiple}}
+            <td>0</td>
+            {{/summary.isMultiple}}
+          </th>
+        </tr>
+        <tr>
+          <th title="Out of all patients eligible for each indicator, this is the average proportion of affected patients" data-toggle="tooltip" data-container="body" data-placement="left">All indicator average</th>
+          <td>{{summary.summaryData.allIndicatorAverage}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="tab-pane tab-borders fade{{tab2Active}} active in{{/tab2Active}}" id="table" role="tabpanel">
+    <div class="clearfix"></div>
+    <div class="top-buffer">
+      <table class="table table-striped" id="indicatorTable">
+        <thead>
+          <tr>
+            <th class="pointer" title="The patient safety indicator name" data-toggle="tooltip" data-container="body" data-placement="top">Indicator</th>
+            <th class="pointer" title="The number of patients affected by this indicator for this practice" data-toggle="tooltip" data-container="body" data-placement="top">Affected patients</th>
+            <th class="pointer" title="The population of patients from this practice that this indicator could affect" data-toggle="tooltip" data-container="body" data-placement="top">Eligible patients</th>
+            <th class="pointer" title="Proportion of the population in focus that are affected by this indicator for this practice" data-toggle="tooltip" data-container="body" data-placement="top">% of eligible patients affected</th>
+            <th class="pointer" title="Proportion of the population in focus that are affected by this indicator across all practices in the local CCG" data-toggle="tooltip" data-container="body" data-placement="top">CCG Avg (%)</th>
+            <th class="pointer" title="Patients no longer affected by this indicator since the last comparison date" data-toggle="tooltip" data-container="body" data-placement="top">Successful intervention</th>
+            <th class="pointer" title="Patients who remain affected by this indicator since the last comparison date" data-toggle="tooltip" data-container="body" data-placement="top">Action pending</th>
+            <th class="pointer" title="Patients affected by this indicator who weren't affected on the last comparison date" data-toggle="tooltip" data-container="body" data-placement="top">New cases</th>
+            <th class="pointer" title="Difference in the number of affected patients between last comparison date and current" data-toggle="tooltip" data-container="body" data-placement="top">Trend</th>
+            <th class="pointer" title="Keeps this indicator on top row of the table even when you sort the columns" data-toggle="tooltip" data-container="body" data-placement="top">Show on top</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{summary.tableData}}
+          <tr class="no-priority">
+            <td title="{{long_name}}" data-toggle="tooltip" data-container="body" data-placement="top">{{short_name}}</td>
+            {{isNum}}
+            <td class="prominentLink" title="Click to view patients" data-toggle="tooltip" data-container="body" data-placement="left" data-href="/practice/{{summary.practiceId}}/date/{{summary.dateId}}/comparedWith/{{summary.comparisonDateId}}/indicator/{{id}}/affected"><a href="javascript:void()">{{num}}</a></td>
+            {{/isNum}}
+            {{!isNum}}
+            <td>0</td>
+            {{/isNum}}
+            <td>{{denom}}</td>
+            <td>{{avg}}</td>
+            <td>{{ccg}}</td>
+            {{isResolved}}
+            <td class="prominentLink" title="Click to view patients" data-toggle="tooltip" data-container="body" data-placement="left" data-href="/practice/{{summary.practiceId}}/date/{{summary.dateId}}/comparedWith/{{summary.comparisonDateId}}/indicator/{{id}}/resolved"><a href="javascript:void()">{{resolved}}</a></td>
+            {{/isResolved}}
+            {{!isResolved}}
+            <td>0</td>
+            {{/isResolved}}
+            {{isExisting}}
+            <td class="prominentLink" title="Click to view patients" data-toggle="tooltip" data-container="body" data-placement="left" data-href="/practice/{{summary.practiceId}}/date/{{summary.dateId}}/comparedWith/{{summary.comparisonDateId}}/indicator/{{id}}/existing"><a href="javascript:void()">{{existing}}</a></td>
+            {{/isExisting}}
+            {{!isExisting}}
+            <td>0</td>
+            {{/isExisting}}
+            {{isNew}}
+            <td class="prominentLink" title="Click to view patients" data-toggle="tooltip" data-container="body" data-placement="left" data-href="/practice/{{summary.practiceId}}/date/{{summary.dateId}}/comparedWith/{{summary.comparisonDateId}}/indicator/{{id}}/new"><a href="javascript:void()">{{new}}</a></td>
+            {{/isNew}}
+            {{!isNew}}
+            <td>0</td>
+            {{/isNew}}
+            <td>{{trendValue}}</td>
+            <td>
+              <input type="checkbox" {{isChecked}}checked{{/isChecked}}/>
+            </td>
+          </tr>
+          {{/summary.tableData}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="tab-pane tab-borders fade{{tab3Active}} active in{{/tab3Active}}" id="charts" role="tabpanel">
+    <div style="padding:10px;">
+      <select class="selectpicker" id="id_chart" data-width="auto" title="Please select a chart to view...">
+        <option value="1" {{chart1Active}}selected{{/chart1Active}}>Proportion of eligible patients affected</option>
+        <option value="2" {{chart2Active}}selected{{/chart2Active}}>Number of affected patients over time</option>
+        <option value="3" {{chart3Active}}selected{{/chart3Active}}>Proportion of eligible patients affected over time</option>
+      </select>
+    </div>
+    <div id="chartPanel"></div>
+  </div>
+</div>

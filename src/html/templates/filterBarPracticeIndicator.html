@@ -1,0 +1,38 @@
+<form id="filterBarPracticeIndicator" class="form-inline">
+  <div class="form-group">
+    <select class="form-control inline-select selectpicker" id="indicatorList" data-live-search="true" data-width="auto">
+      {{indicators}}
+      <option value="{{_id}}" {{isSelected}}selected{{/isSelected}}>{{short_name}}</option>
+      {{/indicators}}
+    </select>
+  </div>
+  <div class="form-group left-buffer align-bottom">
+    <label for="reportType" style="display:block;">Report type:</label>
+    <select class="inline-select" id="typeList" name="reportType">
+      <option value="affected"{{isAffected}} selected="selected"{{/isAffected}}>Affected patients</option>
+      <option value="resolved"{{isResolved}} selected="selected"{{/isResolved}}>Successful intervention</option>
+      <option value="existing"{{isExisting}} selected="selected"{{/isExisting}}>Action pending</option>
+      <option value="new"{{isNew}} selected="selected"{{/isNew}}>New cases</option>
+    </select>
+  </div>
+  <div class="form-group left-buffer align-bottom">
+    <label for="reportDate" style="display:block;">Report date:</label>
+    <select class="inline-select" id="dateList" name="reportDate">
+      {{dates}}
+      {{shouldDisplay}}
+      <option value="{{_id}}" {{isSelected}}selected{{/isSelected}}>{{value}}</option>
+      {{/shouldDisplay}}
+      {{/dates}}
+    </select>
+  </div>
+  <div class="form-group left-buffer align-bottom">
+    <label for="comparisonDate" style="display:block;">Comparison date:</label>
+    <select class="inline-select" id="dateCompareList" name="comparisonDate">
+      {{comparisonDates}}
+      {{shouldDisplay}}
+      <option value="{{_id}}" {{isSelected}}selected{{/isSelected}}>{{value}}</option>
+      {{/shouldDisplay}}
+      {{/comparisonDates}}
+    </select>
+  </div>
+</form>

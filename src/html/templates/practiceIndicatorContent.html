@@ -1,0 +1,116 @@
+<div class="pull-right">
+  <a class="btn btn-primary" data-href="/practice/{{summary.practiceId}}/date/{{summary.dateId}}/comparedWith/{{summary.comparisonDateId}}/indicator/{{summary.indicatorId}}/{{reportType}}/show/{{showChart}}table{{/showChart}}{{showTable}}chart{{/showTable}}" href="javascript:void()" id="toggleChart" role="button"{{tab1Active}} style="display: none"{{/tab1Active}}{{tab3Active}} style="display: none"{{/tab3Active}}>View as {{showChart}}table{{/showChart}}{{showTable}}chart{{/showTable}}</a>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+  <li {{tab1Active}}class="active"{{/tab1Active}} role="presentation"><a id="tableTab" href="#patients" aria-controls="patients" role="tab" data-toggle="tab" data-id="1">Patients</a></li>
+  <li {{tab2Active}}class="active"{{/tab2Active}} role="presentation"><a id="trendTableTab" href="#trend" aria-controls="trend" role="tab" data-toggle="tab" data-id="2">Trend</a></li>
+  <li {{tab3Active}}class="active"{{/tab3Active}} role="presentation"><a href="#information" aria-controls="information" role="tab" data-toggle="tab" data-id="3">Information</a></li>
+</ul>
+<!-- Tab panes-->
+<div class="tab-content">
+  <div class="tab-pane tab-borders fade{{tab1Active}} active in{{/tab1Active}}" id="patients" role="tabpanel">
+    {{noPatients}}
+    No patients found
+    {{/noPatients}}
+    {{somePatients}}
+    <table class="table" id="patientTable">
+      <thead>
+        <tr>
+          <th tooltip="The patient's NHS number" tooltip-append-to-body="true" tooltip-placement="bottom">NHS number</th>
+          <th tooltip="A list of prescribing safety indicators that the patient is currently affected by" tooltip-append-to-body="true" tooltip-placement="bottom">Indicators breached</th>
+          <th tooltip="The date since which the patient was originally found to be affected by this indicator" tooltip-append-to-body="true" tooltip-placement="bottom">Since</th>
+          <th tooltip="Any notes associated with the patient are displayed here" tooltip-append-to-body="true" tooltip-placement="bottom">Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{summary.patients}}
+        <tr class="no-priority">
+          <td data-patient-id="{{id}}">{{nhs}}</td>
+          <td>
+            <table class="table table-borderless">
+              <tbody>
+                {{indicators}}
+                <tr>
+                  <td tooltip="{{long_name}}" tooltip-append-to-body="true" tooltip-placement="left">{{short_name}}</td>
+                </tr>
+                {{/indicators}}
+              </tbody>
+            </table>
+          </td>
+          <td>
+            <table class="table table-borderless">
+              <tbody>
+                {{indicators}}
+                <tr>
+                  <td>{{since}}</td>
+                </tr>
+                {{/indicators}}
+              </tbody>
+            </table>
+          </td>
+          <td data-patient-id="{{id}}" class="note-field">
+            {{isNote}}
+            <p>{{patientNote}}</p>
+            {{/isNote}}
+            {{indicatorNotesToDisplay}}
+            <div>
+              <p><strong>{{name}}:</strong></p>
+              <ul>
+                <li>{{note}}</li>
+              </ul>
+            </div>
+            {{/indicatorNotesToDisplay}}
+            {{isNote}}
+            <p><small>Note last updated by {{patientNoteUpdatedBy}} on {{patientNoteUpdatedLocaleString}}</small></p>
+            {{/isNote}}
+            {{!isNote}}
+            <button class="btn btn-default" data-type="add" data-patient-id="{{id}}" type="button">Add Note</button>
+            {{/isNote}}
+            {{isNote}}
+            <button class="btn btn-default" data-type="edit" data-patient-id="{{id}}" type="button">Edit Note</button>
+            <button class="btn btn-default" data-type="delete" data-patient-id="{{id}}" type="button">Delete Note</button>
+            {{/isNote}}
+          </td>
+        </tr>
+        {{/summary.patients}}
+      </tbody>
+    </table>
+    {{/somePatients}}
+  </div>
+  <div class="tab-pane tab-borders fade{{tab2Active}} active in{{/tab2Active}}" id="trend" role="tabpanel">
+    <div class="clearfix">
+      <div>
+        {{showChart}}
+        <div id="chartPanel"></div>
+        {{/showChart}}
+        {{showTable}}
+        <table class="table" id="trendTable">
+          <thead>
+            <tr>
+              <th tooltip="Date of the report" tooltip-append-to-body="true" tooltip-placement="bottom">Date</th>
+              <th tooltip="The number of patients affected by this indicator" tooltip-append-to-body="true" tooltip-placement="bottom">Affected patients</th>
+              <th tooltip="Difference from previous report" tooltip-append-to-body="true" tooltip-placement="bottom">Trend</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{summary.tableData}}
+            <tr>
+              <td>{{date}}</td>
+              <td>{{num}}</td>
+              <td>
+                <img src='/img/{{trend}}.png' />
+                {{trendValue}}
+              </td>
+            </tr>
+            {{/summary.tableData}}
+          </tbody>
+        </table>
+        {{/showTable}}
+      </div>
+    </div>
+  </div>
+  <div class="tab-pane tab-borders fade{{tab3Active}} active in{{/tab3Active}}" id="information" role="tabpanel" style="height:60vh;overflow-y:auto;">
+    {{info}}
+  </div>
+</div>

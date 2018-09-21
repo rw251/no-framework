@@ -1,0 +1,53 @@
+<div class="row">
+  <div class="col-xs-12">
+    <h3>Contact us</h3>
+    <p>If you have encountered an error with the dashboard please send the details to <a href="mailto:support@smash.srft.nhs.uk">support@smash.srft.nhs.uk</a> and we will respond as soon as possible.</p>
+    <p>For general queries about the project, or just about anything else, please drop us a line to <a href="mailto:smash-contact@listserv.manchester.ac.uk">smash-contact@listserv.manchester.ac.uk</a>.</p>
+    <p><strong>NB. Please don't send us any patient identifiable or otherwise confidential information via email.</strong></p>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12">
+    <div style="height:50vh;overflow-y:auto;">
+      <h3>FAQs  </h3>
+      <h4>A patient no longer has asthma, how do I remove them from the indicator list?</h4>
+      <p>There is a read code "212G. - Asthma resolved" which can be added to a patient's record if their asthma is resolved.</p>
+      <h4>A patient with an "asthma resolved" code is still flagging up in the dashboard</h4>
+      <p>Please use the read code "212G. - Asthma resolved". The alternative read code "21262 - Asthma resolved" does not reach our system. We are trying to resolve this, but in the meantime the code "212G." can be used instead.</p>
+      <h4>A patient is flagging as being ≥65 but they're only 64</h4>
+      <p>
+        For confidentiality reasons we have access to a patient's year of birth, but not their date of birth. To calculate age we simply subtract the year of birth from the current year. Patients whose birthday has already occurred this calendar year have their
+        age calculated correctly, but those whose birthday occurs later in the calendar year will show up as being 1 year older than they actually are. However, the risk to the patient does not change overnight, and the appropriateness of prescribing
+        should be considered for all elderly patients.
+      </p>
+      <h4>Recent codes in the patient's record don't seem to be picked up by the dashboard</h4>
+      <p>
+        To populate the dashboard we are dependent on various data flows from GP practices and from SRFT. Sometimes there is a delay of a couple of days before coded information visible in the patient's record in the practice makes its way into our dashboard.
+        If the problem persists for more than 1 week, please contact the support team - <a href="mailto:support@smash.srft.nhs.uk">support@smash.srft.nhs.uk</a> - and we'll check it out.
+      </p>
+      <h4>The patient's medication has stopped but they still show up in the dashboard</h4>
+      <p>
+        The data we receive shows us when a medication was prescribed, but not when it was discontinued. We consider a patient has stopped a medication when the last prescription occurs more than 3 months ago. This helps us to ensure that a repeat prescription
+        has not been issued. Therefore you need to wait 3 months from the date of the most recent prescription of the drug before the patient will disappear from the dashboard.
+      </p>
+      <h4>The patient's most recent eGFR is ≥45 but they continue to flag up in one of the CKD indicators</h4>
+      <p>
+        The eGFR used to determine the stage of the patient's CKD is the most recent value that occurs more than 3 months before the report date. This is so that we capture all patients prescribed an NSAID who may have CKD. Occasionally this will flag up patients
+        incorrectly, but this is preferable to the situation where patients fail to be flagged up when they should.
+      </p>
+      <h4>What exactly is the "action pending" column?</h4>
+      <p>Whenever you view a report it gives you the option to compare your current numbers with those from a point in the past (by default 1 month ago). For any given patient there are 4 possible scenarios:</p>
+      <ul>
+        <li>Potentially at risk in the past, not at risk now - these patients appear in the "successful intervention" column</li>
+        <li>Not at risk in the past, potentially at risk now - these patients appear in the "new cases" column</li>
+        <li>Potentially at risk in the past, potentially at risk now - these patients appear in the "action pending" column</li>
+        <li>Not at risk in the past, not at risk now - these patients do not appear in the dashboard</li>
+      </ul>        So the action pending column represents patients who have continued to be (potentially) at risk over an extended period.
+      <p></p>
+      <p>
+        There may be occasions where a patient has been reviewed and a decision reached that no action will be taken, therefore it may be impossible to get the figure in the action pending column to 0. To mitigate this we are introducing the ability to attach
+        a note to a patient so that you can see at a glance what action has been taken with a patient to prevent the situation where the same patient is reviewed time and time again.
+      </p>
+    </div>
+  </div>
+</div>

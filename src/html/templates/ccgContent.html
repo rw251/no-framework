@@ -1,0 +1,84 @@
+<div class="pull-right">
+  <button class="btn btn-primary" id="export" type="button" style="display:none;">Export</button>
+</div>
+<ul class="nav nav-tabs" role="tablist">
+  <li {{tab1Active}}class="active"{{/tab1Active}} role="presentation"><a id="tableTab" href="#table" aria-controls="table" role="tab" data-toggle="tab" data-id="1">Table</a></li>
+  <li {{tab2Active}}class="active"{{/tab2Active}} role="presentation"><a href="#charts" aria-controls="charts" role="tab" data-toggle="tab" data-id="2">Charts</a></li>
+</ul>
+<div class="tab-content">
+  <div class="tab-pane tab-borders fade{{tab1Active}} active in{{/tab1Active}}" id="table" role="tabpanel">
+    <div class="clearfix"></div>
+    <div class="top-buffer">
+      <table class="table table-striped" id="indicatorTable">
+        <thead>
+          <tr>
+            <th class="pointer" title="The GP practice" data-toggle="tooltip" data-container="body" data-placement="top">Practice</th>
+            {{isAllIndicators}}
+            <th class="pointer" title="The number of patients affected by any one of the prescribing safety indicators across all practices" data-toggle="tooltip" data-container="body" data-placement="top"">Affected patients</th>
+            <th class="pointer" title="Proportion of eligible patients across all practices who are affected by at least one indicator" data-toggle="tooltip" data-container="body" data-placement="top"">% of eligible patients affected</th>
+            <th class="pointer" title="Proportion of eligible patients across practices in this CCG who are affected by at least one indicator" data-toggle="tooltip" data-container="body" data-placement="top"">CCG Avg (%)</th>
+            <th class="pointer" title="The number of patients affected by more than 1 prescribing safety indicator across all practices" data-toggle="tooltip" data-container="body" data-placement="top"">More than one indicator</th>
+            {{/isAllIndicators}}
+            {{!isAllIndicators}}
+            <th class="pointer" title="The number of patients affected by this indicator across all practices" data-toggle="tooltip" data-container="body" data-placement="top">Affected patients</th>
+            <th class="pointer" title="The population of patients across all practices that this indicator could affect" data-toggle="tooltip" data-container="body" data-placement="top">Eligible patients</th>
+            <th class="pointer" title="Proportion of the population in focus that are affected by this indicator across all practices" data-toggle="tooltip" data-container="body" data-placement="top">% of eligible patients affected</th>
+            <th class="pointer" title="Proportion of the population in focus that are affected by this indicator across all practices in the local CCG" data-toggle="tooltip" data-container="body" data-placement="top">CCG Avg (%)</th>
+            <th class="pointer" title="The number of patients affected by more than 1 indicator across all practices" data-toggle="tooltip" data-container="body" data-placement="top">More than one indicator</th>
+            <th class="pointer" title="Patients no longer affected by this indicator since the last comparison date across all practices" data-toggle="tooltip" data-container="body" data-placement="top">Successful intervention</th>
+            <th class="pointer" title="Patients who remain affected by this indicator since the last comparison date" data-toggle="tooltip" data-container="body" data-placement="top">Action pending</th>
+            <th class="pointer" title="Patients affected by this indicator who weren't affected on the last comparison date" data-toggle="tooltip" data-container="body" data-placement="top">New cases</th>
+            <th class="pointer" title="Difference in the number of affected patients between last comparison date and current" data-toggle="tooltip" data-container="body" data-placement="top">Trend</th>
+            {{/isAllIndicators}}
+            <th class="pointer" title="Keeps this practice on top row of the table even when you sort the columns" data-toggle="tooltip" data-container="body" data-placement="top">Show on top</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{summary.tableData}}
+          <tr class="no-priority">
+            <td class="prominentLink" title="Click to view practice" data-toggle="tooltip" data-container="body" data-placement="left" data-href="/practice/{{id}}/date/{{summary.dateId}}/comparedWith/{{summary.comparisonDateId}}/tab/undefined"><a href="javascript:void(0)">{{short_name}}</a></td>
+            <td>{{num}}</td>
+            {{isAllIndicators}}
+            <td>{{avg}}</td>
+            <td>{{ccg}}</td>
+            <td>{{patientsMultiple}}</td>
+            {{/isAllIndicators}}
+            {{!isAllIndicators}}
+            <td>{{denom}}</td>
+            <td>{{avg}}</td>
+            <td>{{ccg}}</td>
+            <td>{{patientsMultiple}}</td>
+            <td>{{resolved}}</td>
+            <td>{{existing}}</td>
+            <td>{{new}}</td>
+            <td>{{trendValue}}</td>
+            {{/isAllIndicators}}
+            <td>
+              <input type="checkbox" />
+            </td>
+          </tr>
+          {{/summary.tableData}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="tab-pane tab-borders fade{{tab2Active}} active in{{/tab2Active}}" id="charts" role="tabpanel">
+    <div style="padding:10px;">
+      <select class="selectpicker" id="id_chart" data-width="auto" title="Please select a chart to view...">
+        {{isAllIndicators}}
+        <option value="1" {{chart1Active}}selected{{/chart1Active}}>Proportion of eligible patients affected</option>
+        <option value="2" {{chart2Active}}selected{{/chart2Active}}>Split of patients affected by 1 indicator and those affected by 2 or more</option>
+        <option value="3" {{chart3Active}}selected{{/chart3Active}}>Number of affected patients over time</option>
+        <option value="4" {{chart4Active}}selected{{/chart4Active}}>Proportion of eligible patients affected over time</option>
+        <option value="5" {{chart5Active}}selected{{/chart5Active}}>Number of patients affected by more than one indicator over time</option>
+        {{/isAllIndicators}}
+        {{!isAllIndicators}}
+        <option value="6" {{chart6Active}}selected{{/chart6Active}}>Proportion of eligible patients affected</option>
+        <option value="7" {{chart7Active}}selected{{/chart7Active}}>Number of affected patients over time</option>
+        <option value="8" {{chart8Active}}selected{{/chart8Active}}>Proportion of eligible patients affected over time</option>
+        {{/isAllIndicators}}
+      </select>
+    </div>
+    <div id="chartPanel"></div>
+  </div>
+</div>

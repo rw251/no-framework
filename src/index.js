@@ -1,6 +1,25 @@
-import { Router } from 'rw-router';
+import Router from 'rw-router';
+import { Progress } from 'rw-progress';
 import routes from './routes';
 import './styles.scss';
+import 'rw-progress/style.scss';
+
+const P = require('bluebird');
+const $ = require('jquery');
+
+if (!window.Promise) window.Promise = P;
+
+window.$ = $;
+window.jQuery = $;
+window.Progress = Progress;
+require('bootstrap');
+require('bootstrap-select');
+require('datatables.net-bs')(window, $);
+require('datatables.net-buttons-bs')(window, $);
+require('datatables.net-buttons/js/buttons.colVis.js')(window, $);
+require('datatables.net-buttons/js/buttons.html5.js')(window, $);
+
+global.Router = Router;
 
 // The main entry point for the js code
 
