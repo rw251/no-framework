@@ -1,9 +1,11 @@
 // If lots of routes then split into files in a
 // directory called 'routes'
-import { index, about, products } from './controllers';
+import about from './controllers/aboutController';
+import products from './controllers/productController';
+import home from './controllers/homeController';
 
 export default [
   { controller: about, regex: /about/ },
   { controller: products, regex: /products\/(.*)\/edit\/(.*)/ },
-  { controller: index, regex: /.*/, isDefault: true },
+  { controller: home, regex: /.*/, isDefault: true },
 ];

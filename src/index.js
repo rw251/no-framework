@@ -1,6 +1,12 @@
-import { Router } from 'rw-router';
+import Router from 'rw-router';
+import { Progress } from 'rw-progress';
 import routes from './routes';
 import './styles.scss';
+import 'rw-progress/style.scss';
+
+window.Progress = Progress;
+
+global.Router = Router;
 
 // The main entry point for the js code
 

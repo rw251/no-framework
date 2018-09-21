@@ -13,18 +13,20 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "eslint": "^5.4.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "eslint": "^5.6.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
-    "fuse-box": "^3.4.0",
+    "fuse-box": "^3.5.0",
     "node-sass": "^4.9.3",
     "typescript": "^2.9.2",
     "uglify-es": "^3.3.10",
-    "uglify-js": "^3.4.7"
+    "uglify-js": "^3.4.9"
   },
   "dependencies": {
     "rw-progress": "^1.0.3",
-    "rw-router": "^1.0.0",
-    "rw-templater": "^1.0.0"
+    "rw-router": "^1.1.0",
+    "rw-templater": "^1.1.2"
   }
 }

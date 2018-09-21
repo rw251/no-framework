@@ -32,7 +32,7 @@ let isStaging = false;
 Sparky.task('config', () => {
   fuse = FuseBox.init({
     homeDir: 'src',
-    target: 'browser@es6',
+    target: 'browser@es5',
     output: 'dist/$name-$hash.js',
     hash: isProduction,
     sourceMaps: !isProduction,
@@ -65,26 +65,28 @@ Sparky.task('construct-html', () => {
   constructHtml(Sparky.context.css, Sparky.context.js);
 });
 
+Sparky.task('clean', () => Sparky.src('dist/').clean('dist/'));
+
+Sparky.task('copy-assets', () => Sparky.src('**/**.*', { base: './src/assets' }).dest('./dist'));
+
 Sparky.task('set-production', () => {
   isProduction = true;
-  return Sparky.src('dist/').clean('dist/');
 });
 
 Sparky.task('set-staging', () => {
   isStaging = true;
-  return Sparky.src('dist/').clean('dist/');
 });
 
 // development task "node fuse""
-Sparky.task('default', ['config'], () => {
-  app.hmr().watch();
+Sparky.task('default', ['clean', 'copy-assets', 'config'], () => {
+  app.hmr({ reload: true }).watch();
   return fuse.run().then(() => {
     Sparky.exec('construct-html');
   });
 });
 
 // Dist task "node fuse dist"
-Sparky.task('build', ['set-production', 'config'], () => {
+Sparky.task('build', ['clean', 'copy-assets', 'set-production', 'config'], () => {
   fuse.run().then((producer) => {
     const jsBundles = [];
     const injectedCss = [];
@@ -101,8 +103,8 @@ Sparky.task('build', ['set-production', 'config'], () => {
 });
 
 // Dist task "node fuse dist"
-Sparky.task('dist', ['set-staging', 'config'], () => {
-  app.hmr().watch();
+Sparky.task('dist', ['clean', 'copy-assets', 'set-staging', 'config'], () => {
+  app.hmr({ reload: true }).watch();
   fuse.run().then((producer) => {
     const jsBundles = [];
     const injectedCss = [];
