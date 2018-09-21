@@ -1,6 +1,7 @@
 import Router from 'rw-router';
 import { Progress } from 'rw-progress';
 import routes from './routes';
+import state from './state';
 import './styles.scss';
 import 'rw-progress/style.scss';
 
@@ -59,7 +60,10 @@ if (!controller) {
 }
 const initialize = () => {
   parameters[0] = () => {
+    // unhide everything on initial page load after content is generated
     document.getElementById('container').style.display = '';
+    // ensure headers display correctly on hidden tab
+    state.redrawTables();
   };
   controller.apply({}, parameters);
 };

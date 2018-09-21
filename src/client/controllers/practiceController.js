@@ -76,6 +76,8 @@ export default (callback, practiceId, dateId, comparisonDateId, tabId, chartId) 
           const tab2Active = +state.practiceTabId === 2;
           const tab3Active = +state.practiceTabId === 3;
 
+          const hideExportButton = !tab2Active;
+
           const chart1Active = +state.practiceChartId === 1;
           const chart2Active = +state.practiceChartId === 2;
           const chart3Active = +state.practiceChartId === 3;
@@ -142,6 +144,7 @@ export default (callback, practiceId, dateId, comparisonDateId, tabId, chartId) 
               tab1Active,
               tab2Active,
               tab3Active,
+              hideExportButton,
               summary,
               chart1Active,
               chart2Active,
@@ -185,7 +188,7 @@ export default (callback, practiceId, dateId, comparisonDateId, tabId, chartId) 
             });
           }
 
-          const table = $('#indicatorTable').DataTable({
+          state.tables.practiceTable = $('#indicatorTable').DataTable({
             info: false, // we don't want showing 1 to n of n
             searching: false, // we don't want a search box
             stateSave: true, // let's remember which page/sorting etc
@@ -236,8 +239,14 @@ export default (callback, practiceId, dateId, comparisonDateId, tabId, chartId) 
             }, 0);
           }
 
+          const $exportButton = $('#export');
+
+          $exportButton.on('click', () => {
+            window.location = '/static/test.csv';
+          });
+
           $('#tableTab').on('hidden.bs.tab', () => {
-            // $exportButton.hide(); // only want export button on table tab
+            $exportButton.hide(); // only want export button on table tab
           });
 
           $('li a[role="tab"]').on('shown.bs.tab', (e) => {
@@ -245,8 +254,9 @@ export default (callback, practiceId, dateId, comparisonDateId, tabId, chartId) 
             global.Router.shift(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}/chart/${state.practiceChartId}`, true);
 
             if (e.currentTarget.id === 'tableTab') {
-              table.columns.adjust().draw(false); // ensure headers display correctly on hidden tab
-              // $exportButton.show(); // only want export button on table tab
+              // ensure headers display correctly on hidden tab
+              state.tables.practiceTable.columns.adjust().draw(false);
+              $exportButton.show(); // only want export button on table tab
             }
           });
         }

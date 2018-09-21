@@ -195,6 +195,15 @@ export default (callback, dateId, comparisonDateId, tabId, indicatorId, chartId)
             }
           };
 
+          state.tables.indicatorTable = $('#indicatorTable').DataTable({
+            info: false, // we don't want showing 1 to n of n
+            searching: false, // we don't want a search box
+            stateSave: true, // let's remember which page/sorting etc
+            paging: false, // always want all indicators
+            scrollY: '50vh',
+            scrollCollapse: true,
+          });
+
           // add chart
           if (+state.ccgChartId) {
             setTimeout(() => {
@@ -203,9 +212,25 @@ export default (callback, dateId, comparisonDateId, tabId, indicatorId, chartId)
             }, 0);
           }
 
+          const $exportButton = $('#export');
+
+          $exportButton.on('click', () => {
+            window.location = '/static/test.csv';
+          });
+
+          $('#tableTab').on('hidden.bs.tab', () => {
+            $exportButton.hide(); // only want export button on table tab
+          });
+
           $('li a[role="tab"]').on('shown.bs.tab', (e) => {
             state.ccgTabId = $(e.currentTarget).data('id');
             global.Router.shift(`/ccg/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.ccgTabId}/indicator/${state.indicatorId}/chart/${state.ccgChartId}`, true);
+
+            if (e.currentTarget.id === 'tableTab') {
+              // ensure headers display correctly on hidden tab
+              state.tables.indicatorTable.columns.adjust().draw(false);
+              $exportButton.show(); // only want export button on table tab
+            }
           });
         }
 

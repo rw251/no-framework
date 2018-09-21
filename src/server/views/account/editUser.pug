@@ -1,0 +1,30 @@
+.container
+  .btn-toolbar
+    a.btn.btn-info(href='/users') Back to user list
+  form(action='/users/' + user.email + '/edit', method='post')
+    label(for='name') Full name:
+    input.form-control(type='text', name='name', placeholder='Full name', required='', autofocus='', value=user.name)
+    label(for='email') Email:
+    input.form-control(type='text', name='email', placeholder='Email address', required='', autofocus='', value=user.email)
+    input.form-control(type='hidden', name='originalEmail', value=user.email)
+    .form-group
+      label(for='practices') Practice(s):
+      select.form-control.selectpicker(name='practices',data-live-search="true",multiple='',title='Select one or more GP practices')
+        each practice in practices
+          option(value=practice._id, selected=user.practices.indexOf(''+practice._id)>-1)= practice.short_name
+    .form-group
+      .checkbox
+        label
+          input(name='isAdmin', type='checkbox', checked=user.roles.indexOf('admin')>-1 ? 'checked' : undefined)
+          | Is Admin
+    .form-group
+      .checkbox
+        label
+          input(name='isCCG', type='checkbox', checked=user.roles.indexOf('ccg')>-1 ? 'checked' : undefined)
+          | Is CCG user
+    button.btn.btn-purple.btn-block.history(type='submit')
+      | Update 
+      span.fa.fa-arrow-circle-right
+    - if (flash && flash.shift)
+      while message = flash.shift()
+        div.alert(class='alert-' + message.type,role="alert")= message.message

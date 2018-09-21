@@ -1,28 +1,31 @@
 import state from './state';
 import data from './dummyData';
 
+const myFetch = url => fetch(url).then(response => response.json());
+
 export default {
 
   practices: () => new Promise((resolve) => {
     if (state.practices) return resolve(state.practices);
-    return setTimeout(() => {
-      state.practices = data.practices;
+    return myFetch('/api/practices').then((practices) => {
+      state.practices = practices;
       resolve(state.practices);
-    }, Math.random() * 500);
+    });
   }),
 
-  summary: (practiceId, dateId, comparisonDateId) => new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(data.summary(practiceId, dateId, comparisonDateId));
-    }, Math.random() * 300);
-  }),
+  summary: (practiceId, dateId, comparisonDateId) => myFetch(`/api/practice/${practiceId}/summaryfordate/${dateId}/comparedWith/${comparisonDateId}`),
 
-  ccgSummary: (indicatorId, dateId, comparisonDateId) => new Promise((resolve) => {
-    setTimeout(() => {
-      if (!indicatorId || indicatorId === '0') resolve(data.ccgSummaryAllIndicators(indicatorId, dateId, comparisonDateId));
-      else resolve(data.ccgSummarySingleIndicator(indicatorId, dateId, comparisonDateId));
-    }, Math.random() * 300);
-  }),
+  ccgSummary: (indicatorId, dateId, comparisonDateId) => (!indicatorId || indicatorId === '0'
+    ? myFetch(`/api/indicator/all/summaryfordate/${dateId}`)
+    : myFetch(`/api/indicator/${indicatorId}/summaryfordate/${dateId}/comparedWith/${comparisonDateId}`)),
+
+  // new Promise((resolve) => {
+  //   setTimeout(() => {
+  //     if (!indicatorId || indicatorId === '0') resolve(dat
+  // a.ccgSummaryAllIndicators(indicatorId, dateId, comparisonDateId));
+  //     else resolve(data.ccgSummarySingleIndicator(indicatorId, dateId, comparisonDateId));
+  //   }, Math.random() * 300);
+  // }),
 
   affected: (practiceId, indicatorId, dateId, comparisonDateId) => new Promise((resolve) => {
     setTimeout(() => {
@@ -56,18 +59,18 @@ export default {
 
   datesForDisplay: () => new Promise((resolve) => {
     if (state.dates) return resolve(state.dates);
-    return setTimeout(() => {
-      state.dates = data.dates;
+    return myFetch('/api/datesForDisplay').then((dates) => {
+      state.dates = dates;
       resolve(state.dates);
-    }, Math.random() * 600);
+    });
   }),
 
   indicators: () => new Promise((resolve) => {
     if (state.indicators) return resolve(state.indicators);
-    return setTimeout(() => {
-      state.indicators = data.indicators;
+    return myFetch('/api/indicators').then((indicators) => {
+      state.indicators = indicators;
       resolve(state.indicators);
-    }, Math.random() * 1000);
+    });
   }),
 
   notesDelete: patientId => new Promise(resolve => setTimeout(() => {

@@ -1,0 +1,8 @@
+.container-small.container
+  .btn-toolbar
+    a.btn.btn-info(href='/users') Back to user list
+  form(action='/users/#{email}/delete', method='post')
+    | Are you sure you want to delete #{email}
+    .btn-toolbar
+      button.btn.btn-danger(type='submit') Delete
+      a.btn.btn-default(href='/users') Cancel

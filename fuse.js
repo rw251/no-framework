@@ -4,13 +4,13 @@ const path = require('path');
 
 const constructHtml = (css, js) => {
   const templates = [];
-  fs.readdirSync('./src/html/templates').forEach((file) => {
-    const template = fs.readFileSync(path.join('./src/html/templates', file), 'utf8');
+  fs.readdirSync('./src/client/html/templates').forEach((file) => {
+    const template = fs.readFileSync(path.join('./src/client/html/templates', file), 'utf8');
     templates.push(`<script type='text/rw' id='${file.split('.')[0]}'>${template}</script>`);
   });
-  const headerAboveCss = fs.readFileSync('./src/html/partials/headerAboveCss.html', 'utf8');
-  const belowCssAboveJs = fs.readFileSync('./src/html/partials/belowCssAboveJs.html', 'utf8');
-  const belowJs = fs.readFileSync('./src/html/partials/belowJs.html', 'utf8');
+  const headerAboveCss = fs.readFileSync('./src/client/html/partials/headerAboveCss.html', 'utf8');
+  const belowCssAboveJs = fs.readFileSync('./src/client/html/partials/belowCssAboveJs.html', 'utf8');
+  const belowJs = fs.readFileSync('./src/client/html/partials/belowJs.html', 'utf8');
 
   const html = `
     ${headerAboveCss}
@@ -31,7 +31,7 @@ let isStaging = false;
 
 Sparky.task('config', () => {
   fuse = FuseBox.init({
-    homeDir: 'src',
+    homeDir: 'src/client',
     target: 'browser@es5',
     output: 'dist/$name-$hash.js',
     hash: isProduction,
@@ -57,7 +57,16 @@ Sparky.task('config', () => {
     });
 
   if (!isProduction) {
-    fuse.dev({ fallback: 'index.html' }); // fallback ensures all 404s get the index.html
+    fuse.dev({
+      fallback: 'index.html', // fallback ensures all 404s get the index.html
+      proxy: {
+        '/api': {
+          target: 'http://localhost:8118',
+          changeOrigin: true,
+          // pathRewrite: { '^/api': '/' },
+        },
+      },
+    });
   }
 });
 
@@ -67,7 +76,7 @@ Sparky.task('construct-html', () => {
 
 Sparky.task('clean', () => Sparky.src('dist/').clean('dist/'));
 
-Sparky.task('copy-assets', () => Sparky.src('**/**.*', { base: './src/assets' }).dest('./dist'));
+Sparky.task('copy-assets', () => Sparky.src('**/**.*', { base: './src/client/assets' }).dest('./dist'));
 
 Sparky.task('set-production', () => {
   isProduction = true;

@@ -1,0 +1,18 @@
+.container.container-small
+  - if (flash && flash.shift)
+    while message = flash.shift() 
+      .alert.animated.fadeIn(class='alert-' + message.type)
+        p= message.message
+  .btn-toolbar
+    a.btn.btn-info(href='/practice') Back to SMASH
+  h1 Reset password
+  form.signin.form-horizontal(action='/forgot', method='post')
+    p
+      | Please enter your email and click 'Send reset link'.  We will then email you details of how to change your password.
+    .form-group
+      label.col-md-4.control-label(for='email') Email
+      .col-md-8
+        input#email.form-control(required='', type='email', name='email', placeholder='Email')
+    .form-group
+      .col-md-offset-4.col-md-8
+        button.btn.btn-primary(type='submit') Send reset link

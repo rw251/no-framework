@@ -1,0 +1,60 @@
+.col-md-offset-1.col-md-5
+  h1 SMASH
+  p Welcome to SMASH, the medication safety dashboard!
+  p
+    | This system examines electronic health records and identifies patients who may be potentially at risk due to the
+    | medications that they are receiving. These lists of patients are then displayed to support health professionals
+    | when making decisions about patient care which could lead to improvements in medication safety in primary care.
+  p
+    | The system is currently being evaluated in Salford Clinical Commissioning Group (CCG), with general practices
+    | receiving pharmacist support to help address medication safety challenges highlighted by the dashboard. User
+    | feedback will be incorporated into a second version of the dashboard for wider rollout across Greater
+    | Manchester.
+  p
+    | Please sign in to access the dashboard.
+  p
+    | If you would like more information, please contact 
+    a(href='mailto:support@smash.srft.nhs.uk') support@smash.srft.nhs.uk
+    | .
+  p
+    small
+      | This dashboard has been developed by the 
+      a(href='http://www.patientsafety.manchester.ac.uk/', target='_blank', rel='noopener')
+        | NIHR Greater Manchester Patient Safety Translational Research Centre (GM PSTRC)
+      | .
+  p
+    small
+      small
+        | The views expressed are those of the authors and not necessarily those of the NHS, the NIHR or the Department of Health.
+  .row
+    .col-sm-4.col-xs-6
+      img(src='/img/logo_uom.png', alt='University of Manchester logo', style='max-width: 100%; max-height: 100%;')
+    .col-sm-4.col-xs-6
+      img(src='/img/logo_nihr.png', alt='National Institute for Health Research logo', style='max-width: 100%; max-height: 100%;')
+.col-md-6(style='margin-top:100px')
+  .well
+    h3 Sign in
+    form.signin.form-horizontal(method='post')
+      .form-group
+        label.col-lg-2.col-md-2.control-label(for='username') Email
+        .col-md-8
+          input#email.form-control(required='', type='email', name='username', placeholder='Email')
+      .form-group
+        label.col-lg-2.col-md-2.control-label(for='password') Password
+        .col-md-8
+          input#password.form-control(required='', type='password', name='password', placeholder='Password')
+      // consume messages as jade reads them
+      - if (flash && flash.shift)
+        while message = flash.shift() 
+          .alert.animated.fadeIn(class='alert-' + message.type)
+            p= message.message
+      .form-group
+        .col-lg-offset-2.col-md-offset-2.col-md-8
+          button.btn.btn-primary(type='submit') Sign in
+          a(href='reset')  Forgot password?
+        .col-lg-offset-2.col-md-offset-2.col-md-8(style='padding-top:6px')
+          p
+            small
+              | If you would like to use the system but are not yet registered, please contact 
+              a(href='mailto:support@smash.srft.nhs.uk') support@smash.srft.nhs.uk
+              | .

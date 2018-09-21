@@ -172,11 +172,39 @@ export default (
           }
         });
 
+        state.tables.patientTable = $('#patientTable').DataTable({
+          info: false, // we don't want showing 1 to n of n
+          searching: false, // we don't want a search box
+          stateSave: true, // let's remember which page/sorting etc
+          paging: false, // always want all indicators
+          scrollY: '50vh',
+          scrollCollapse: true,
+        });
+
+        state.tables.trendTable = $('#trendTable').DataTable({
+          info: false, // we don't want showing 1 to n of n
+          searching: false, // we don't want a search box
+          stateSave: true, // let's remember which page/sorting etc
+          paging: false, // always want all indicators
+          scrollY: '50vh',
+          scrollCollapse: true,
+        });
+
         $('li a[role="tab"]').on('shown.bs.tab', (e) => {
           state.practiceIndicatorTabId = $(e.currentTarget).data('id');
           if (+state.practiceIndicatorTabId === 2) $('#toggleChart').show();
           else $('#toggleChart').hide();
           global.Router.shift(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/indicator/${state.indicatorId}/${state.reportType}/show/${state.practiceIndicatorChartOrTable}/tab/${state.practiceIndicatorTabId}`, true);
+
+          if (e.currentTarget.id === 'tableTab') {
+            // ensure headers display correctly on hidden tab
+            state.tables.patientTable.columns.adjust().draw(false);
+            // $exportButton.show(); // only want export button on table tab
+          } else if (e.currentTarget.id === 'trendTableTab') {
+            // ensure headers display correctly on hidden tab
+            state.tables.trendTable.columns.adjust().draw(false);
+            // $exportButton.show(); // only want export button on table tab
+          }
         });
 
         const addStartEndDateListeners = () => {

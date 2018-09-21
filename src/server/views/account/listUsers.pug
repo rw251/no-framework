@@ -1,0 +1,25 @@
+div
+  a.btn.btn-info(href='/users/add') Add User
+table.table
+  thead
+    tr
+      th Name
+      th Email
+      th Practices
+      th Roles
+      th(colspan=2) Actions
+  tbody
+    each user in users
+      tr
+        td= user.name
+        td= user.email
+        td= user.practices.join(', ')
+        td= user.roles.join(', ')
+        td
+          a.btn(href='/users/#{user.email}/edit')
+            i.glyphicon.glyphicon-edit
+        td
+          if user.email !== global.user.email
+            a.btn(href='/users/#{user.email}/delete')
+              i.glyphicon.glyphicon-trash
+a.btn.btn-info(href='/users/add') Add User

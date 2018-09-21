@@ -12,7 +12,8 @@ export default [
 
   { controller: multiplePatients, regex: /practice\/(.*)\/date\/(.*)\/multiple/ },
 
-  // /practice/:practiceId/date/:dateId/comparedWith/:comparisonDateId/indicator/:indicatorId/:reportType/tab/:tabId/show/:chartOrTable
+  // /practice/:practiceId/date/:dateId/comparedWith/:comparisonDateId
+  // /indicator/:indicatorId/:reportType/show/:chartOrTable/tab/:tabId
   { controller: practiceIndicator, regex: /practice\/(.*)\/date\/(.*)\/comparedWith\/(.*)\/indicator\/(.*)\/(.*)\/show\/(.*)\/tab\/(.*)/ },
   { controller: practiceIndicator, regex: /practice\/(.*)\/date\/(.*)\/comparedWith\/(.*)\/indicator\/(.*)\/(.*)\/show\/(.*)/ },
   { controller: practiceIndicator, regex: /practice\/(.*)\/date\/(.*)\/comparedWith\/(.*)\/indicator\/(.*)\/(.*)/ },
