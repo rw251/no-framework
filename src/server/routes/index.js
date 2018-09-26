@@ -33,15 +33,15 @@ router.get('/dates', isAuthenticated, apiController.listDates);
 router.get('/datesForDisplay', isAuthenticated, apiController.listDatesForDisplay);
 
 router.get('/practice/:practiceId/summaryfordate/:dateId/comparedWith/:comparisonDateId', isAuthenticated, apiController.getPracticeData);
-router.get('/practice/:practiceId/summaryfordate/:dateId/comparedWith/:comparisonDateId/export', isAuthenticated, apiController.exportPracticeData);
+router.get('/practice/:practiceId/summaryfordate/:dateId/comparedWith/:comparisonDateId/sort/:sort/dir/:dir/export', isAuthenticated, apiController.exportPracticeData);
 
 router.get('/patients/:practiceId/:dateId/:comparisonDateId/:indicatorId/:reportType', isAuthenticated, apiController.getPatientData);
 router.get('/patients/:practiceId/multiple/on/:dateId', isAuthenticated, apiController.getMultiplePatientData);
 
 router.get('/indicator/all/summaryfordate/:dateId', isAuthenticated, apiController.getAllIndicatorData);
-router.get('/indicator/all/summaryfordate/:dateId/export', isAuthenticated, apiController.exportCcgAllIndicatorData);
+router.get('/indicator/all/summaryfordate/:dateId/sort/:sort/dir/:dir/export', isAuthenticated, apiController.exportCcgAllIndicatorData);
 router.get('/indicator/:indicatorId/summaryfordate/:dateId/comparedWith/:comparisonDateId', isAuthenticated, apiController.getSingleIndicatorData);
-router.get('/indicator/:indicatorId/summaryfordate/:dateId/comparedWith/:comparisonDateId/export', isAuthenticated, apiController.exportCcgSingleIndicatorData);
+router.get('/indicator/:indicatorId/summaryfordate/:dateId/comparedWith/:comparisonDateId/sort/:sort/dir/:dir/export', isAuthenticated, apiController.exportCcgSingleIndicatorData);
 
 router.post('/note', isAuthenticated, apiController.updatePatientNote);
 router.delete('/note/:patientId', isAuthenticated, apiController.deletePatientNote);

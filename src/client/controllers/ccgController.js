@@ -4,7 +4,7 @@ import api from '../api';
 import { updateActive, updateBreadcrumbs } from './common';
 import { displayCCGChart } from '../charts';
 
-export default (callback, dateId, comparisonDateId, tabId, indicatorId, chartId) => {
+export default (callback, dateId, comparisonDateId, tabId, indicatorId, chartId, sort, dir) => {
   window.Progress.start();
   state.latestPageRequestId = Math.random();
   const localPageRequestId = state.latestPageRequestId;
@@ -42,7 +42,35 @@ export default (callback, dateId, comparisonDateId, tabId, indicatorId, chartId)
       state.ccgChartId = 0;
     }
 
-    global.Router.shift(`/ccg/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.ccgTabId}/indicator/${state.indicatorId}/chart/${state.ccgChartId}`);
+    if (+state.indicatorId > 0) {
+      if (sort && sort !== 'undefined') {
+        state.ccgSingleSort = sort;
+      } else if (!state.ccgSingleSort) {
+        state.ccgSingleSort = 1;
+      }
+      if (dir && dir !== 'undefined') {
+        state.ccgSingleSortDirection = dir;
+      } else if (!state.ccgSingleSortDirection) {
+        state.ccgSingleSortDirection = 'desc';
+      }
+      state.ccgSort = state.ccgSingleSort;
+      state.ccgSortDirection = state.ccgSingleSortDirection;
+    } else {
+      if (sort && sort !== 'undefined') {
+        state.ccgAllSort = sort;
+      } else if (!state.ccgAllSort) {
+        state.ccgAllSort = 1;
+      }
+      if (dir && dir !== 'undefined') {
+        state.ccgAllSortDirection = dir;
+      } else if (!state.ccgAllSortDirection) {
+        state.ccgAllSortDirection = 'desc';
+      }
+      state.ccgSort = state.ccgAllSort;
+      state.ccgSortDirection = state.ccgAllSortDirection;
+    }
+
+    global.Router.shift(`/ccg/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.ccgTabId}/indicator/${state.indicatorId}/chart/${state.ccgChartId}/sort/${state.ccgSort}/dir/${state.ccgSortDirection}`);
 
     Promise
       .all([
@@ -143,24 +171,28 @@ export default (callback, dateId, comparisonDateId, tabId, indicatorId, chartId)
           // cause navigation on the select drop down changing
           document.getElementById('indicatorList').addEventListener('change', (event) => {
             if (event.target.value !== state.indicatorId) {
-              global.Router.navigate(`/ccg/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.ccgTabId}/indicator/${event.target.value}/chart/${state.ccgChartId}`);
+              if (+event.target.value === 0) {
+                global.Router.navigate(`/ccg/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.ccgTabId}/indicator/${event.target.value}/chart/${state.ccgChartId}/sort/${state.ccgAllSort}/dir/${state.ccgAllSortDirection}`);
+              } else {
+                global.Router.navigate(`/ccg/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.ccgTabId}/indicator/${event.target.value}/chart/${state.ccgChartId}/sort/${state.ccgSingleSort}/dir/${state.ccgSingleSortDirection}`);
+              }
             }
           });
           document.getElementById('dateList').addEventListener('change', (event) => {
             if (event.target.value !== state.dateId) {
-              global.Router.navigate(`/ccg/date/${event.target.value}/comparedWith/${state.comparisonDateId}/tab/${state.ccgTabId}/indicator/${state.indicatorId}/chart/${state.ccgChartId}`);
+              global.Router.navigate(`/ccg/date/${event.target.value}/comparedWith/${state.comparisonDateId}/tab/${state.ccgTabId}/indicator/${state.indicatorId}/chart/${state.ccgChartId}/sort/${state.ccgSort}/dir/${state.ccgSortDirection}`);
             }
           });
           document.getElementById('dateCompareList').addEventListener('change', (event) => {
             if (event.target.value !== state.comparisonDateId) {
-              global.Router.navigate(`/ccg/date/${state.dateId}/comparedWith/${event.target.value}/tab/${state.ccgTabId}/indicator/${state.indicatorId}/chart/${state.ccgChartId}`);
+              global.Router.navigate(`/ccg/date/${state.dateId}/comparedWith/${event.target.value}/tab/${state.ccgTabId}/indicator/${state.indicatorId}/chart/${state.ccgChartId}/sort/${state.ccgSort}/dir/${state.ccgSortDirection}`);
             }
           });
           const chart = document.getElementById('id_chart');
           if (chart) {
             chart.addEventListener('change', (event) => {
               if (event.target.value !== state.ccgChartId) {
-                global.Router.navigate(`/ccg/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.ccgTabId}/indicator/${state.indicatorId}/chart/${event.target.value}`);
+                global.Router.navigate(`/ccg/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.ccgTabId}/indicator/${state.indicatorId}/chart/${event.target.value}/sort/${state.ccgSort}/dir/${state.ccgSortDirection}`);
               }
             });
           }
@@ -203,9 +235,25 @@ export default (callback, dateId, comparisonDateId, tabId, indicatorId, chartId)
             info: false, // we don't want showing 1 to n of n
             searching: false, // we don't want a search box
             stateSave: true, // let's remember which page/sorting etc
+            order: [[state.ccgSort, state.ccgSortDirection]],
             paging: false, // always want all indicators
             scrollY: '50vh',
             scrollCollapse: true,
+          });
+
+          $('#indicatorTable').on('order.dt', () => {
+            // This will show: "Ordering on column 1 (asc)", for example
+            const order = state.tables.indicatorTable.order();
+            if (+state.indicatorId === 0) {
+              state.ccgAllSort = order[0][0];
+              state.ccgAllSortDirection = order[0][1];
+            } else {
+              state.ccgSingleSort = order[0][0];
+              state.ccgSingleSortDirection = order[0][1];
+            }
+            state.ccgSort = order[0][0];
+            state.ccgSortDirection = order[0][1];
+            global.Router.shift(`/ccg/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.ccgTabId}/indicator/${state.indicatorId}/chart/${state.ccgChartId}/sort/${state.ccgSort}/dir/${state.ccgSortDirection}`, true);
           });
 
           // add chart
@@ -220,8 +268,8 @@ export default (callback, dateId, comparisonDateId, tabId, indicatorId, chartId)
 
           $exportButton.on('click', () => {
             window.location = +state.indicatorId === 0
-              ? `/api/indicator/all/summaryfordate/${state.dateId}/export`
-              : `/api/indicator/${state.indicatorId}/summaryfordate/${state.dateId}/comparedWith/${state.comparisonDateId}/export`;
+              ? `/api/indicator/all/summaryfordate/${state.dateId}/sort/${state.ccgSort}/dir/${state.ccgSortDirection}/export`
+              : `/api/indicator/${state.indicatorId}/summaryfordate/${state.dateId}/comparedWith/${state.comparisonDateId}/sort/${state.ccgSort}/dir/${state.ccgSortDirection}/export`;
           });
 
           $('#tableTab').on('hidden.bs.tab', () => {
@@ -230,7 +278,7 @@ export default (callback, dateId, comparisonDateId, tabId, indicatorId, chartId)
 
           $('li a[role="tab"]').on('shown.bs.tab', (e) => {
             state.ccgTabId = $(e.currentTarget).data('id');
-            global.Router.shift(`/ccg/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.ccgTabId}/indicator/${state.indicatorId}/chart/${state.ccgChartId}`, true);
+            global.Router.shift(`/ccg/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.ccgTabId}/indicator/${state.indicatorId}/chart/${state.ccgChartId}/sort/${state.ccgSort}/dir/${state.ccgSortDirection}`, true);
 
             if (e.currentTarget.id === 'tableTab') {
               // ensure headers display correctly on hidden tab

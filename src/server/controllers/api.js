@@ -45,7 +45,9 @@ const getPracticeData = async (req, res, next) => {
   const practiceId = +req.params.practiceId;
   const dateId = +req.params.dateId;
   const comparisonDateId = +req.params.comparisonDateId;
-  const rtn = { practiceId, dateId, comparisonDateId };
+  const sortBy = +req.params.sort;
+  const sortDirection = req.params.dir;
+  const rtn = { practiceId, dateId, comparisonDateId, sortBy, sortDirection };
 
   try {
     rtn.report = await reportCtrl.getForPracticeOnDate(practiceId, dateId);
@@ -73,7 +75,9 @@ const getPracticeData = async (req, res, next) => {
 
 const getAllIndicatorData = async (req, res, next) => {
   const dateId = +req.params.dateId;
-  const rtn = { dateId };
+  const sortBy = +req.params.sort;
+  const sortDirection = req.params.dir;
+  const rtn = { dateId, sortBy, sortDirection };
 
   try {
     rtn.reports = await reportCtrl.getAllIndicatorData(dateId);
@@ -95,7 +99,9 @@ const getSingleIndicatorData = async (req, res, next) => {
   const dateId = +req.params.dateId;
   const comparisonDateId = +req.params.comparisonDateId;
   const indicatorId = +req.params.indicatorId;
-  const rtn = { indicatorId, dateId, comparisonDateId };
+  const sortBy = +req.params.sort;
+  const sortDirection = req.params.dir;
+  const rtn = { indicatorId, dateId, comparisonDateId, sortBy, sortDirection };
 
   try {
     rtn.reports = await reportCtrl.getSingleIndicatorData(dateId);
@@ -254,7 +260,7 @@ const getTableData = (
   indicatorLookup,
   ccgAverages,
   sortBy,
-  sortReverse
+  sortDirection
 ) => {
   let ind = {};
   let reportIndicator = {};
@@ -335,15 +341,17 @@ const getTableData = (
     }
   }
 
-  if (sortBy) {
-    const multiplier = sortReverse ? -1 : 1;
+  if (sortBy || sortBy === 0) {
+    const columns = ['short_name', 'num', 'denom', 'avg',
+      'ccg', 'resolved', 'existing', 'new', 'trendValue'];
+    const multiplier = sortDirection === 'desc' ? -1 : 1;
     indicators = indicators.sort((a, b) => {
-      if (typeof (a[sortBy]) === 'number') {
-        return multiplier * (a[sortBy] - b[sortBy]);
+      if (typeof (a[columns[sortBy]]) === 'number') {
+        return multiplier * (a[columns[sortBy]] - b[columns[sortBy]]);
       }
-      if (a[sortBy] < b[sortBy]) {
+      if (a[columns[sortBy]] < b[columns[sortBy]]) {
         return -1 * multiplier;
-      } if (a[sortBy] > b[sortBy]) {
+      } if (a[columns[sortBy]] > b[columns[sortBy]]) {
         return 1 * multiplier;
       }
       return 0;
@@ -396,7 +404,7 @@ const getTrendChartData = (allReports, practice, indicatorLookup, dateLookup) =>
   return rtn;
 };
 
-const getTableDataForAllIndicators = (reports, practiceLookup, sortBy, sortReverse) => {
+const getTableDataForAllIndicators = (reports, practiceLookup, sortBy, sortDirection) => {
   let pra;
   let report;
   let i;
@@ -436,15 +444,16 @@ const getTableDataForAllIndicators = (reports, practiceLookup, sortBy, sortRever
     }
   }
 
-  if (sortBy) {
-    const multiplier = sortReverse ? -1 : 1;
+  if (sortBy || sortBy === 0) {
+    const columns = ['short_name', 'num', 'avg', 'ccg', 'patientsMultiple'];
+    const multiplier = sortDirection === 'desc' ? -1 : 1;
     practices = practices.sort((a, b) => {
-      if (typeof (a[sortBy]) === 'number') {
-        return multiplier * (a[sortBy] - b[sortBy]);
+      if (typeof (a[columns[sortBy]]) === 'number') {
+        return multiplier * (a[columns[sortBy]] - b[columns[sortBy]]);
       }
-      if (a[sortBy] < b[sortBy]) {
+      if (a[columns[sortBy]] < b[columns[sortBy]]) {
         return -1 * multiplier;
-      } if (a[sortBy] > b[sortBy]) {
+      } if (a[columns[sortBy]] > b[columns[sortBy]]) {
         return 1 * multiplier;
       }
       return 0;
@@ -456,7 +465,7 @@ const getTableDataForAllIndicators = (reports, practiceLookup, sortBy, sortRever
 
 const getTableDataForSingleIndicator = (
   indicatorId, reports, comparisonReports,
-  practiceLookup, ccgAverages, sortBy, sortReverse
+  practiceLookup, ccgAverages, sortBy, sortDirection
 ) => {
   let pra = {};
   let avg;
@@ -543,15 +552,17 @@ const getTableDataForSingleIndicator = (
     }
   }
 
-  if (sortBy) {
-    const multiplier = sortReverse ? -1 : 1;
+  if (sortBy || sortBy === 0) {
+    const columns = ['short_name', 'num', 'denom', 'avg', 'ccg', 'patientsMultiple',
+      'resolved', 'existing', 'new', 'trendValue'];
+    const multiplier = sortDirection === 'desc' ? -1 : 1;
     practices = practices.sort((a, b) => {
-      if (typeof (a[sortBy]) === 'number') {
-        return multiplier * (a[sortBy] - b[sortBy]);
+      if (typeof (a[columns[sortBy]]) === 'number') {
+        return multiplier * (a[columns[sortBy]] - b[columns[sortBy]]);
       }
-      if (a[sortBy] < b[sortBy]) {
+      if (a[columns[sortBy]] < b[columns[sortBy]]) {
         return -1 * multiplier;
-      } if (a[sortBy] > b[sortBy]) {
+      } if (a[columns[sortBy]] > b[columns[sortBy]]) {
         return 1 * multiplier;
       }
       return 0;
@@ -1236,7 +1247,7 @@ exports.exportPracticeData = async (req, res, next) => {
 
   const csvData = getTableData(
     data.report, data.comparisonReport, data.practice,
-    data.indicatorLookup, data.ccgAverages, data.sortBy, data.sortReverse
+    data.indicatorLookup, data.ccgAverages, data.sortBy, data.sortDirection
   );
 
   const csv = json2csv(csvData, opts);
@@ -1255,7 +1266,7 @@ exports.exportCcgAllIndicatorData = async (req, res, next) => {
   const data = await getAllIndicatorData(req, res, next);
   const opts = {
     fields: [
-      { value: 'long_name', label: 'Practice' },
+      { value: 'short_name', label: 'Practice' },
       { value: 'num', label: 'Affected patients' },
       { value: 'avg', label: '% of eligible patients affected' },
       { value: 'ccg', label: 'CCG Avg (%)' },
@@ -1264,7 +1275,7 @@ exports.exportCcgAllIndicatorData = async (req, res, next) => {
   };
 
   const csvData = getTableDataForAllIndicators(data.reports, data.practiceLookup,
-    data.sortBy, data.sortReverse);
+    data.sortBy, data.sortDirection);
 
   const csv = json2csv(csvData, opts);
 
@@ -1279,7 +1290,7 @@ exports.exportCcgSingleIndicatorData = async (req, res, next) => {
   const data = await getSingleIndicatorData(req, res, next);
   const opts = {
     fields: [
-      { value: 'long_name', label: 'Practice' },
+      { value: 'short_name', label: 'Practice' },
       { value: 'num', label: 'Affected patients' },
       { value: 'denom', label: 'Eligible patients' },
       { value: 'avg', label: '% of eligible patients affected' },
@@ -1293,7 +1304,7 @@ exports.exportCcgSingleIndicatorData = async (req, res, next) => {
   };
 
   const csvData = getTableDataForSingleIndicator(data.indicatorId, data.reports,
-    data.comparisonReports, data.practiceLookup, data.ccgAverages, data.sortBy, data.sortReverse);
+    data.comparisonReports, data.practiceLookup, data.ccgAverages, data.sortBy, data.sortDirection);
 
   const csv = json2csv(csvData, opts);
 

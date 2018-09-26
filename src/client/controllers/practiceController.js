@@ -4,7 +4,7 @@ import api from '../api';
 import { updateActive, updateBreadcrumbs } from './common';
 import { displaySinglePracticeChart } from '../charts';
 
-export default (callback, practiceId, dateId, comparisonDateId, tabId, chartId) => {
+export default (callback, practiceId, dateId, comparisonDateId, tabId, chartId, sort, dir) => {
   // always start a progress bar if there is any async
   // behaviour loading the content.
   window.Progress.start();
@@ -53,10 +53,22 @@ export default (callback, practiceId, dateId, comparisonDateId, tabId, chartId) 
         state.practiceChartId = 0;
       }
 
+      if (sort && sort !== 'undefined') {
+        state.practiceSort = sort;
+      } else if (!state.practiceSort) {
+        state.practiceSort = 1;
+      }
+
+      if (dir && dir !== 'undefined') {
+        state.practiceSortDirection = dir;
+      } else if (!state.practiceSortDirection) {
+        state.practiceSortDirection = 'desc';
+      }
+
       // changes url from /practice to /practice/:practiceId but
       // ensures the history is correct. E.g. back goes to the thing
       // before /practice was called
-      global.Router.shift(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}/chart/${state.practiceChartId}`);
+      global.Router.shift(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}/chart/${state.practiceChartId}/sort/${state.practiceSort}/dir/${state.practiceSortDirection}`);
 
       api.summary(state.practiceId, state.dateId, state.comparisonDateId).then((summary) => {
         // check if the most recently requested page is this
@@ -165,25 +177,25 @@ export default (callback, practiceId, dateId, comparisonDateId, tabId, chartId) 
           if (practiceList) {
             practiceList.addEventListener('change', (event) => {
               if (event.target.value !== state.practiceId) {
-                global.Router.navigate(`/practice/${event.target.value}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}/chart/${state.practiceChartId}`);
+                global.Router.navigate(`/practice/${event.target.value}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}/chart/${state.practiceChartId}/sort/${state.practiceSort}/dir/${state.practiceSortDirection}`);
               }
             });
           }
           document.getElementById('dateList').addEventListener('change', (event) => {
             if (event.target.value !== state.dateId) {
-              global.Router.navigate(`/practice/${state.practiceId}/date/${event.target.value}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}/chart/${state.practiceChartId}`);
+              global.Router.navigate(`/practice/${state.practiceId}/date/${event.target.value}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}/chart/${state.practiceChartId}/sort/${state.practiceSort}/dir/${state.practiceSortDirection}`);
             }
           });
           document.getElementById('dateCompareList').addEventListener('change', (event) => {
             if (event.target.value !== state.comparisonDateId) {
-              global.Router.navigate(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${event.target.value}/tab/${state.practiceTabId}/chart/${state.practiceChartId}`);
+              global.Router.navigate(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${event.target.value}/tab/${state.practiceTabId}/chart/${state.practiceChartId}/sort/${state.practiceSort}/dir/${state.practiceSortDirection}`);
             }
           });
           const chart = document.getElementById('id_chart');
           if (chart) {
             chart.addEventListener('change', (event) => {
               if (event.target.value !== state.practiceChartId) {
-                global.Router.navigate(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}/chart/${event.target.value}`);
+                global.Router.navigate(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}/chart/${event.target.value}/sort/${state.practiceSort}/dir/${state.practiceSortDirection}`);
               }
             });
           }
@@ -192,9 +204,18 @@ export default (callback, practiceId, dateId, comparisonDateId, tabId, chartId) 
             info: false, // we don't want showing 1 to n of n
             searching: false, // we don't want a search box
             stateSave: true, // let's remember which page/sorting etc
+            order: [[state.practiceSort, state.practiceSortDirection]],
             paging: false, // always want all indicators
             scrollY: '50vh',
             scrollCollapse: true,
+          });
+
+          $('#indicatorTable').on('order.dt', () => {
+            // This will show: "Ordering on column 1 (asc)", for example
+            const order = state.tables.practiceTable.order();
+            state.practiceSort = order[0][0];
+            state.practiceSortDirection = order[0][1];
+            global.Router.shift(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}/chart/${state.practiceChartId}/sort/${state.practiceSort}/dir/${state.practiceSortDirection}`, true);
           });
 
           const addStartEndDateListeners = () => {
@@ -242,7 +263,7 @@ export default (callback, practiceId, dateId, comparisonDateId, tabId, chartId) 
           const $exportButton = $('#export');
 
           $exportButton.on('click', () => {
-            window.location = `/api/practice/${state.practiceId}/summaryfordate/${state.dateId}/comparedWith/${state.comparisonDateId}/export`;
+            window.location = `/api/practice/${state.practiceId}/summaryfordate/${state.dateId}/comparedWith/${state.comparisonDateId}/sort/${state.practiceSort}/dir/${state.practiceSortDirection}/export`;
           });
 
           $('#tableTab').on('hidden.bs.tab', () => {
@@ -251,7 +272,7 @@ export default (callback, practiceId, dateId, comparisonDateId, tabId, chartId) 
 
           $('li a[role="tab"]').on('shown.bs.tab', (e) => {
             state.practiceTabId = $(e.currentTarget).data('id');
-            global.Router.shift(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}/chart/${state.practiceChartId}`, true);
+            global.Router.shift(`/practice/${state.practiceId}/date/${state.dateId}/comparedWith/${state.comparisonDateId}/tab/${state.practiceTabId}/chart/${state.practiceChartId}/sort/${state.practiceSort}/dir/${state.practiceSortDirection}`, true);
 
             if (e.currentTarget.id === 'tableTab') {
               // ensure headers display correctly on hidden tab

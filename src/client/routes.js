@@ -14,15 +14,18 @@ export default [
 
   // /practice/:practiceId/date/:dateId/comparedWith/:comparisonDateId
   // /indicator/:indicatorId/:reportType/show/:chartOrTable/tab/:tabId
+  { controller: practiceIndicator, regex: /practice\/(.*)\/date\/(.*)\/comparedWith\/(.*)\/indicator\/(.*)\/(.*)\/show\/(.*)\/tab\/(.*)\/sort\/(.*)\/dir\/(.*)/ },
   { controller: practiceIndicator, regex: /practice\/(.*)\/date\/(.*)\/comparedWith\/(.*)\/indicator\/(.*)\/(.*)\/show\/(.*)\/tab\/(.*)/ },
   { controller: practiceIndicator, regex: /practice\/(.*)\/date\/(.*)\/comparedWith\/(.*)\/indicator\/(.*)\/(.*)\/show\/(.*)/ },
   { controller: practiceIndicator, regex: /practice\/(.*)\/date\/(.*)\/comparedWith\/(.*)\/indicator\/(.*)\/(.*)/ },
   { controller: practiceIndicator, regex: /practice\/(.*)\/date\/(.*)\/comparedWith\/(.*)\/indicator\/(.*)/ },
 
+  { controller: practice, regex: /practice\/(.*)\/date\/(.*)\/comparedWith\/(.*)\/tab\/(.*)\/chart\/(.*)\/sort\/(.*)\/dir\/(.*)/ },
   { controller: practice, regex: /practice\/(.*)\/date\/(.*)\/comparedWith\/(.*)\/tab\/(.*)\/chart\/(.*)/ },
   { controller: practice, regex: /practice\/(.*)\/date\/(.*)\/comparedWith\/(.*)\/tab\/(.*)/ },
   { controller: practice, regex: /practice/ },
 
+  { controller: ccg, regex: /ccg\/date\/(.*)\/comparedWith\/(.*)\/tab\/(.*)\/indicator\/(.*)\/chart\/(.*)\/sort\/(.*)\/dir\/(.*)/ },
   { controller: ccg, regex: /ccg\/date\/(.*)\/comparedWith\/(.*)\/tab\/(.*)\/indicator\/(.*)\/chart\/(.*)/ },
   { controller: ccg, regex: /ccg\/date\/(.*)\/comparedWith\/(.*)\/tab\/(.*)\/indicator\/(.*)/ },
   { controller: ccg, regex: /ccg\/date\/(.*)\/comparedWith\/(.*)\/tab\/(.*)/ },
