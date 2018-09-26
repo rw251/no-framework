@@ -13,7 +13,7 @@ export default (callback, productId, editId) => {
       document.querySelector('a.active').classList.remove('active');
       document.querySelector('#nav-tab-4').classList.add('active');
 
-      document.getElementById('main').innerHTML = Template.it('products', {
+      const data = {
         productId,
         editId,
         isFruit: Math.random() > 0.5,
@@ -28,7 +28,23 @@ export default (callback, productId, editId) => {
           { name: 'civic', speed: 'medium' },
           { name: 'porsche', speed: 'fast' },
         ],
-      });
+      };
+
+      document.getElementById('main').innerHTML = Template.it('products', data);
+
+      // OR DO IT ALL WITH STRING LITERALS
+      //
+      // const fruits = data.isFruit && `<ul>${data.fruit
+      //  .map(v => `<li>${v.name} are ${v.colour}</li>`).join('')}</ul>`;
+      // const cars = data.isCars && `<ul>${data.cars
+      //  .map(v => `<li>${v.name}s are ${v.speed}</li>`).join('')}</ul>`;
+
+      // document.getElementById('main').innerHTML = `
+      //   <p>Some fruit if isFruit is true:<p>
+      //   ${fruits}
+      //   <p>Some cars if isCars is true:</p>
+      //   ${cars}
+      // `;
     }
 
     if (callback) callback();

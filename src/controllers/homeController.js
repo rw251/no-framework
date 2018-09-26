@@ -15,6 +15,10 @@ export default (callback) => {
       document.querySelector('#nav-tab-1').classList.add('active');
 
       document.getElementById('main').innerHTML = Template.it('home');
+
+      // OR DO IT ALL WITH STRING LITERALS
+      //
+      document.getElementById('main').innerHTML = '<p>Home page.</p>';
     }
 
     if (callback) callback();
