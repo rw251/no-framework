@@ -66,6 +66,7 @@ export default (
 
         const patientLookup = {};
         summary.patients.forEach((p) => {
+          if (!p.indicatorNotes) p.indicatorNotes = [];
           p.indicatorNotesToDisplay = p.indicatorNotes.filter(note => p.indicators.filter(indicator => indicator.id === note.id).length > 0);
           p.isNote = !!p.patientNote || p.indicatorNotesToDisplay.length > 0;
           p.indicators.forEach((indicator) => {
@@ -199,11 +200,9 @@ export default (
           if (e.currentTarget.id === 'tableTab') {
             // ensure headers display correctly on hidden tab
             state.tables.patientTable.columns.adjust().draw(false);
-            // $exportButton.show(); // only want export button on table tab
           } else if (e.currentTarget.id === 'trendTableTab') {
             // ensure headers display correctly on hidden tab
             state.tables.trendTable.columns.adjust().draw(false);
-            // $exportButton.show(); // only want export button on table tab
           }
         });
 

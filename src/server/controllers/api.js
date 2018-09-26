@@ -1,4 +1,4 @@
-const json2csv = require('json2csv');
+const json2csv = require('json2csv').parse;
 const dateCtrl = require('./date');
 const episodeCtrl = require('./episode');
 const indicatorCtrl = require('./indicator');
@@ -24,22 +24,22 @@ const getAffectedUnique = (report, practice) => {
   return Object.keys(patients).length;
 };
 
-const getAffectedMultiple = (report, practice) => {
-  const patients = {};
-  const patientsMultiple = {};
-  if (report && report.i && report.i.length > 0) {
-    report.i.forEach((v) => {
-      if (!common.isIndicatorUsed(v.id, practice)) return;
-      if (v.p) {
-        v.p.forEach((vv) => {
-          if (!patients[vv]) patients[vv] = 1;
-          else patientsMultiple[vv] = 1;
-        });
-      }
-    });
-  }
-  return Object.keys(patientsMultiple).length;
-};
+// const getAffectedMultiple = (report, practice) => {
+//   const patients = {};
+//   const patientsMultiple = {};
+//   if (report && report.i && report.i.length > 0) {
+//     report.i.forEach((v) => {
+//       if (!common.isIndicatorUsed(v.id, practice)) return;
+//       if (v.p) {
+//         v.p.forEach((vv) => {
+//           if (!patients[vv]) patients[vv] = 1;
+//           else patientsMultiple[vv] = 1;
+//         });
+//       }
+//     });
+//   }
+//   return Object.keys(patientsMultiple).length;
+// };
 
 const getPracticeData = async (req, res, next) => {
   const practiceId = +req.params.practiceId;
@@ -73,7 +73,7 @@ const getPracticeData = async (req, res, next) => {
 
 const getAllIndicatorData = async (req, res, next) => {
   const dateId = +req.params.dateId;
-  const rtn = { };
+  const rtn = { dateId };
 
   try {
     rtn.reports = await reportCtrl.getAllIndicatorData(dateId);
@@ -95,7 +95,7 @@ const getSingleIndicatorData = async (req, res, next) => {
   const dateId = +req.params.dateId;
   const comparisonDateId = +req.params.comparisonDateId;
   const indicatorId = +req.params.indicatorId;
-  const rtn = { indicatorId };
+  const rtn = { indicatorId, dateId, comparisonDateId };
 
   try {
     rtn.reports = await reportCtrl.getSingleIndicatorData(dateId);
@@ -187,7 +187,7 @@ const getSummaryData = (report, practice) => {
 
   summaryData.practiceSize = report.practiceSize;
   summaryData.totalPatients = getAffectedUnique(report, practice);
-  summaryData.multiple = getAffectedMultiple(report, practice);
+  summaryData.multiple = report.multiple;// getAffectedMultiple(report, practice);
   summaryData.allIndicatorAverage = `${report.eligible === 0 ? 0 : ((report.affected / report.eligible) * 100).toFixed(1)}%`;
 
   return summaryData;
@@ -198,16 +198,51 @@ const getMetaData = (practiceId, practiceLookup, dateId, comparisonDateId, dateL
   const reportDate = common.getDate(dateId, dateLookup);
   const comparisonDate = common.getDate(comparisonDateId, dateLookup);
 
-  let metadata = 'Patient Safety Dashboard';
-  metadata += '\n\n';
-  metadata += 'Perspective: Single Practice';
-  metadata += '\n';
-  metadata += `Practice: ${practice ? practice.long_name : ''}`;
-  metadata += '\n';
-  metadata += `Report date: ${reportDate ? reportDate.toDateString() : ''}`;
-  metadata += '\n';
-  metadata += `Comparison date: ${comparisonDate ? comparisonDate.toDateString() : ''}`;
-  metadata += '\n\n';
+  const metadata = `
+Patient Safety Dashboard
+
+Perspective: Single Practice
+Practice: ${practice ? practice.long_name : ''}
+Report date: ${(reportDate || '').substr(0, 10)}
+Comparison date: ${(comparisonDate || '').substr(0, 10)}
+
+`;
+
+  return metadata;
+};
+
+const getMetaDataForSingleIndicatorExport = (
+  indicatorId, indicatorLookup, dateId,
+  comparisonDateId, dateLookup
+) => {
+  const indicator = common.getObjectByUnderscoreId(indicatorId, indicatorLookup);
+  const reportDate = common.getDate(dateId, dateLookup);
+  const comparisonDate = common.getDate(comparisonDateId, dateLookup);
+
+  const metadata = `
+Patient Safety Dashboard
+
+Perspective: All Practices
+Indicator: ${indicator !== null ? indicator.short_name : ''}
+Report date: ${(reportDate || '').substr(0, 10)}
+Comparison date: ${(comparisonDate || '').substr(0, 10)}
+
+`;
+
+  return metadata;
+};
+
+const getMetaDataForAllIndicatorsExport = (dateId, dateLookup) => {
+  const reportDate = common.getDate(dateId, dateLookup);
+
+  const metadata = `
+Patient Safety Dashboard
+
+Perspective: All Practices
+Indicator: All indicators combined
+Report date: ${(reportDate || '').substr(0, 10)}
+
+`;
 
   return metadata;
 };
@@ -1054,7 +1089,10 @@ exports.getSingleIndicatorData = async (req, res, next) => {
 
   try {
     const { reports, practiceLookup, indicatorId, comparisonReports } = data;
-    const { ccgAverages, trends, datesForChart } = data;
+    const { ccgAverages, trends, datesForChart, dateId, comparisonDateId } = data;
+    rtn.dateId = dateId;
+    rtn.indicatorId = indicatorId;
+    rtn.comparisonDateId = comparisonDateId;
     rtn.tableData = getTableDataForSingleIndicator(
       indicatorId, reports,
       comparisonReports, practiceLookup, ccgAverages
@@ -1072,7 +1110,8 @@ exports.getAllIndicatorData = async (req, res, next) => {
   const rtn = {};
 
   try {
-    const { reports, practiceLookup, allReports, datesForChart } = data;
+    const { reports, practiceLookup, allReports, datesForChart, dateId } = data;
+    rtn.dateId = dateId;
     rtn.tableData = getTableDataForAllIndicators(reports, practiceLookup);
     rtn.trendChartData = getTrendDataForAllIndicators(allReports, practiceLookup, datesForChart);
     res.json(rtn);
@@ -1106,6 +1145,37 @@ exports.getPatientData = async (req, res, next) => {
     common.logError('[single-practice-api-controller] [exports.data] Error processing data: ', e);
     common.respondWithError(res, e);
   }
+};
+
+exports.updatePatientNote = async (req, res) => {
+  let status = 'ok';
+  try {
+    await patientCtrl.setNote(
+      req.body.id, req.body.patientNote || '',
+      req.body.indicatorNotes,
+      req.body.patientNoteUpdated,
+      req.body.patientNoteUpdatedBy // req.user.name
+    );
+  } catch (e) {
+    common.logError('[patient-controller] [updatePatientNote] Error processing data: ', e);
+    common.respondWithError(res, e);
+    status = 'error';
+  }
+
+  res.send({ status });
+};
+
+exports.deletePatientNote = async (req, res) => {
+  let status = 'ok';
+  try {
+    await patientCtrl.deleteNote(req.params.patientId);
+  } catch (e) {
+    common.logError('[patient-controller] [updatePatientNote] Error processing data: ', e);
+    common.respondWithError(res, e);
+    status = 'error';
+  }
+
+  res.send({ status });
 };
 
 exports.getMultiplePatientData = async (req, res, next) => {
@@ -1150,39 +1220,89 @@ exports.getPracticeData = async (req, res, next) => {
 
 exports.exportPracticeData = async (req, res, next) => {
   const data = await getPracticeData(req, res, next);
-  // RW - special characters are not correctly displayed in excel.
+  const opts = {
+    fields: [
+      { value: 'short_name', label: 'Indicator' },
+      { value: 'num', label: 'Affected patients' },
+      { value: 'denom', label: 'Eligible patients' },
+      { value: 'avg', label: '% of eligible patients affected' },
+      { value: 'ccg', label: 'CCG Avg (%)' },
+      { value: 'resolved', label: 'Successful intervention' },
+      { value: 'existing', label: 'Action pending' },
+      { value: 'new', label: 'New cases' },
+      { value: 'trendValue', label: 'Trend' },
+    ],
+  };
 
-  // After investigation:
-  /* - Notepad+=1 correctly opens the files - it is just excel that doesn't
-    - The issue is to do with UTF8 vs UTF8 + BOM
-    - Without BOM excel doesn't correctly interpret characters that are outside UTF8
-    - Most other text viewers don't need the BOM and just know that if they see a character
-      like 11000001 then it means (use the next 2 bytes), 11100001 (use the next 3 bytes) etc.
-    - setting the charset differently doesn't seem to work
-    - prepending '\xEF\xBB\xBF' doesn't work
-    - this fiddle (http://jsfiddle.net/W432s/) for a client side download works but can't see how to
-      translate it to server side
-    - I will leave for now but possiblities are:
-        o export as Excel using a different library
-        o export as tab delimited?
-        o translate the special characters prior to sending e.g. ? -> Women, ? -> >=
-  */
-  json2csv(
-    {
-      data: getTableData(
-        data.report, data.comparisonReport, data.practice,
-        data.indicatorLookup, data.ccgAverages, data.sortBy, data.sortReverse
-      ),
-      fields: ['short_name', 'num', 'denom', 'avg', 'ccg', 'resolved', 'existing', 'new', 'trendValue'],
-      fieldNames: ['Indicator', 'Affected patients', 'Eligible patients', '% of eligible patients affected', 'CCG Avg (%)', 'Successful intervention', 'Action pending', 'New cases', 'Trend'],
-    },
-    (err, csv) => {
-      const metadata = getMetaData(
-        data.practiceId, data.practiceLookup,
-        data.dateId, data.comparisonDateId, data.dateLookup
-      );
-      res.attachment('PatientSafety-Dashboard-SinglePractice-SingleIndicator.csv');
-      res.end(metadata + csv, 'utf8');
-    }
+  const csvData = getTableData(
+    data.report, data.comparisonReport, data.practice,
+    data.indicatorLookup, data.ccgAverages, data.sortBy, data.sortReverse
   );
+
+  const csv = json2csv(csvData, opts);
+
+  const metadata = getMetaData(
+    data.practiceId, data.practiceLookup,
+    data.dateId, data.comparisonDateId, data.dateLookup
+  );
+
+  res.attachment('PatientSafety-Dashboard-SinglePractice-SingleIndicator.csv');
+  res.end(`\ufeff${metadata}${csv}`, 'utf8');
+  // the \ufeff character is so that excel displays greater than or equal to correctly
+};
+
+exports.exportCcgAllIndicatorData = async (req, res, next) => {
+  const data = await getAllIndicatorData(req, res, next);
+  const opts = {
+    fields: [
+      { value: 'long_name', label: 'Practice' },
+      { value: 'num', label: 'Affected patients' },
+      { value: 'avg', label: '% of eligible patients affected' },
+      { value: 'ccg', label: 'CCG Avg (%)' },
+      { value: 'patientsMultiple', label: 'More than one indicator' },
+    ],
+  };
+
+  const csvData = getTableDataForAllIndicators(data.reports, data.practiceLookup,
+    data.sortBy, data.sortReverse);
+
+  const csv = json2csv(csvData, opts);
+
+  const metadata = getMetaDataForAllIndicatorsExport(data.dateId, data.dateLookup);
+
+  res.attachment('PatientSafety-Dashboard-AllPractices-AllIndicators.csv');
+  res.end(`\ufeff${metadata}${csv}`, 'utf8');
+  // the \ufeff character is so that excel displays greater than or equal to correctly
+};
+
+exports.exportCcgSingleIndicatorData = async (req, res, next) => {
+  const data = await getSingleIndicatorData(req, res, next);
+  const opts = {
+    fields: [
+      { value: 'long_name', label: 'Practice' },
+      { value: 'num', label: 'Affected patients' },
+      { value: 'denom', label: 'Eligible patients' },
+      { value: 'avg', label: '% of eligible patients affected' },
+      { value: 'ccg', label: 'CCG Avg (%)' },
+      { value: 'patientsMultiple', label: 'More than one indicator' },
+      { value: 'resolved', label: 'Successful intervention' },
+      { value: 'existing', label: 'Action pending' },
+      { value: 'new', label: 'New cases' },
+      { value: 'trendValue', label: 'Trend' },
+    ],
+  };
+
+  const csvData = getTableDataForSingleIndicator(data.indicatorId, data.reports,
+    data.comparisonReports, data.practiceLookup, data.ccgAverages, data.sortBy, data.sortReverse);
+
+  const csv = json2csv(csvData, opts);
+
+  const metadata = getMetaDataForSingleIndicatorExport(
+    data.indicatorId, data.indicatorLookup,
+    data.dateId, data.comparisonDateId, data.dateLookup
+  );
+
+  res.attachment('PatientSafety-Dashboard-AllPractices-SingleIndicator.csv');
+  res.end(`\ufeff${metadata}${csv}`, 'utf8');
+  // the \ufeff character is so that excel displays greater than or equal to correctly
 };

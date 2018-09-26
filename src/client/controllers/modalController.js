@@ -1,11 +1,11 @@
 import Template from 'rw-templater';
-import state from '../state';
 import api from '../api';
-import { updateActive, updateBreadcrumbs } from './common';
 
 const modal = {
 
   initialize: (patientLookup) => {
+    modal.patientLookup = patientLookup;
+
     document.getElementById('patientTable').addEventListener('click', (e) => {
       if (e.target.tagName.toLowerCase() !== 'button') return;
 
@@ -13,11 +13,11 @@ const modal = {
 
       if (type === 'delete') {
         $('#modal')
-          .html(Template.it('modal-note-sure', { nhs: patientLookup[patientId].nhs, id: patientLookup[patientId].id }))
+          .html(Template.it('modal-note-sure', { nhs: modal.patientLookup[patientId].nhs, id: modal.patientLookup[patientId].id }))
           .modal();
       } else {
         $('#modal')
-          .html(Template.it('modal-note', { patient: patientLookup[patientId] }))
+          .html(Template.it('modal-note', { patient: modal.patientLookup[patientId] }))
           .modal();
       }
     });
@@ -28,13 +28,14 @@ const modal = {
       } else if (e.target.tagName.toLowerCase() === 'button') {
         if (e.target.classList.contains('btn-danger')) { // delete note
           api.notesDelete(e.target.dataset.patientId).then(() => {
+            const currentPatient = modal.patientLookup[e.target.dataset.patientId];
             // update ui;
-            patientLookup[e.target.dataset.patientId].indicatorNotesToDisplay = [];
-            patientLookup[e.target.dataset.patientId].isNote = false;
-            patientLookup[e.target.dataset.patientId].patientNote = '';
-            patientLookup[e.target.dataset.patientId].indicatorNotes = [];
+            currentPatient.indicatorNotesToDisplay = [];
+            currentPatient.isNote = false;
+            currentPatient.patientNote = '';
+            currentPatient.indicatorNotes = [];
 
-            $(`td.note-field[data-patient-id=${e.target.dataset.patientId}]`).html(Template.it('note', patientLookup[e.target.dataset.patientId]));
+            $(`td.note-field[data-patient-id=${e.target.dataset.patientId}]`).html(Template.it('note', currentPatient));
 
             $('#modal').modal('hide');
           });
@@ -43,6 +44,7 @@ const modal = {
 
           // create note
           const note = {
+            id: e.target.dataset.patientId,
             patientNote: $('#patientNote').val(),
             patientNoteUpdated: timeNow.toISOString(),
             patientNoteUpdatedBy: $('#usersName').text(),
@@ -62,24 +64,30 @@ const modal = {
           }
 
           // upsert note
-          api.notesUpsert(e.target.dataset.patientId, note).then(() => {
-            patientLookup[e.target.dataset.patientId].indicatorNotes = note.indicatorNotes;
-            patientLookup[e.target.dataset.patientId].indicatorNotesToDisplay = note.indicatorNotes.filter(nt => patientLookup[e.target.dataset.patientId].indicators.filter(indicator => indicator.id === nt.id).length > 0);
-            patientLookup[e.target.dataset.patientId].isNote = true;
-            patientLookup[e.target.dataset.patientId].indicators.forEach((indicator) => {
+          api.notesUpsert(note).then(() => {
+            const currentPatient = modal.patientLookup[e.target.dataset.patientId];
+            currentPatient.indicatorNotes = note.indicatorNotes;
+            currentPatient.indicatorNotesToDisplay = note
+              .indicatorNotes.filter(nt => currentPatient
+                .indicators.filter(indicator => indicator.id === nt.id).length > 0);
+            currentPatient.isNote = true;
+            currentPatient.indicators.forEach((indicator) => {
               indicator.note = '';
-              patientLookup[e.target.dataset.patientId].indicatorNotes.forEach((nt) => {
+              currentPatient.indicatorNotes.forEach((nt) => {
                 if (nt.id === indicator.id) {
                   indicator.note = nt.note;
                 }
               });
             });
-            patientLookup[e.target.dataset.patientId].patientNote = note.patientNote;
-            patientLookup[e.target.dataset.patientId].patientNoteUpdatedBy = note.patientNoteUpdatedBy;
-            patientLookup[e.target.dataset.patientId].patientNoteUpdatedLocaleString = note.patientNoteUpdatedLocaleString;
+            currentPatient.patientNote = note.patientNote;
+            currentPatient.patientNoteUpdatedBy = note.patientNoteUpdatedBy;
+            currentPatient.patientNoteUpdatedLocaleString = note.patientNoteUpdatedLocaleString;
+
+            currentPatient.isNote = !!currentPatient.patientNote
+              || currentPatient.indicatorNotesToDisplay.length > 0;
 
             $(`td.note-field[data-patient-id=${e.target.dataset.patientId}]`).html(
-              Template.it('note', patientLookup[e.target.dataset.patientId])
+              Template.it('note', currentPatient)
             );
 
             $('#modal').modal('hide');

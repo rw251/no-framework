@@ -97,6 +97,10 @@ export default (callback, dateId, comparisonDateId, tabId, indicatorId, chartId)
             c.shouldDisplay = c._id < +state.dateId;
           });
 
+          if (!summary.comparisonDateId) {
+            summary.comparisonDateId = state.comparisonDateId;
+          }
+
           updateActive('tab-ccg');
           const crumbs = [
             { label: 'All Practices' },
@@ -215,7 +219,9 @@ export default (callback, dateId, comparisonDateId, tabId, indicatorId, chartId)
           const $exportButton = $('#export');
 
           $exportButton.on('click', () => {
-            window.location = '/static/test.csv';
+            window.location = +state.indicatorId === 0
+              ? `/api/indicator/all/summaryfordate/${state.dateId}/export`
+              : `/api/indicator/${state.indicatorId}/summaryfordate/${state.dateId}/comparedWith/${state.comparisonDateId}/export`;
           });
 
           $('#tableTab').on('hidden.bs.tab', () => {

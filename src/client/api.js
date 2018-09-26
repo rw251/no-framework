@@ -1,65 +1,48 @@
 import state from './state';
 import data from './dummyData';
 
-const myFetch = url => fetch(url).then(response => response.json());
+const doGet = url => fetch(url).then(response => response.json());
+const doPost = (url, dataToSend) => fetch(url, {
+  method: 'POST',
+  headers: {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(dataToSend),
+}).then(response => response.json());
+const doDelete = url => fetch(url, { method: 'DELETE' }).then(response => response.json());
 
 export default {
 
   practices: () => new Promise((resolve) => {
     if (state.practices) return resolve(state.practices);
-    return myFetch('/api/practices').then((practices) => {
+    return doGet('/api/practices').then((practices) => {
       state.practices = practices;
       resolve(state.practices);
     });
   }),
 
-  summary: (practiceId, dateId, comparisonDateId) => myFetch(`/api/practice/${practiceId}/summaryfordate/${dateId}/comparedWith/${comparisonDateId}`),
+  summary: (practiceId, dateId, comparisonDateId) => (!practiceId || practiceId === '0'
+    ? new Promise(resolve => resolve({ tableData: [], summaryData: {} }))
+    : doGet(`/api/practice/${practiceId}/summaryfordate/${dateId}/comparedWith/${comparisonDateId}`)),
 
   ccgSummary: (indicatorId, dateId, comparisonDateId) => (!indicatorId || indicatorId === '0'
-    ? myFetch(`/api/indicator/all/summaryfordate/${dateId}`)
-    : myFetch(`/api/indicator/${indicatorId}/summaryfordate/${dateId}/comparedWith/${comparisonDateId}`)),
+    ? doGet(`/api/indicator/all/summaryfordate/${dateId}`)
+    : doGet(`/api/indicator/${indicatorId}/summaryfordate/${dateId}/comparedWith/${comparisonDateId}`)),
 
-  // new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     if (!indicatorId || indicatorId === '0') resolve(dat
-  // a.ccgSummaryAllIndicators(indicatorId, dateId, comparisonDateId));
-  //     else resolve(data.ccgSummarySingleIndicator(indicatorId, dateId, comparisonDateId));
-  //   }, Math.random() * 300);
-  // }),
+  affected: (practiceId, indicatorId, dateId, comparisonDateId) => doGet(`/api/patients/${practiceId}/${dateId}/${comparisonDateId}/${indicatorId}/numerator`),
 
-  affected: (practiceId, indicatorId, dateId, comparisonDateId) => new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(data.affected(practiceId, indicatorId, dateId, comparisonDateId));
-    }, Math.random() * 600);
-  }),
+  existing: (practiceId, indicatorId, dateId, comparisonDateId) => doGet(`/api/patients/${practiceId}/${dateId}/${comparisonDateId}/${indicatorId}/existing`),
 
-  existing: (practiceId, indicatorId, dateId, comparisonDateId) => new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(data.existing(practiceId, indicatorId, dateId, comparisonDateId));
-    }, Math.random() * 600);
-  }),
+  resolved: (practiceId, indicatorId, dateId, comparisonDateId) => doGet(`/api/patients/${practiceId}/${dateId}/${comparisonDateId}/${indicatorId}/resolved`),
 
-  resolved: (practiceId, indicatorId, dateId, comparisonDateId) => new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(data.resolved(practiceId, indicatorId, dateId, comparisonDateId));
-    }, Math.random() * 600);
-  }),
+  new: (practiceId, indicatorId, dateId, comparisonDateId) => doGet(`/api/patients/${practiceId}/${dateId}/${comparisonDateId}/${indicatorId}/new`),
 
-  new: (practiceId, indicatorId, dateId, comparisonDateId) => new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(data.new(practiceId, indicatorId, dateId, comparisonDateId));
-    }, Math.random() * 600);
-  }),
-
-  multiple: (practiceId, dateId) => new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(data.multiple(practiceId, dateId));
-    }, Math.random() * 600);
-  }),
+  multiple: (practiceId, dateId) => doGet(`/api/patients/${practiceId}/multiple/on/${dateId}`),
 
   datesForDisplay: () => new Promise((resolve) => {
     if (state.dates) return resolve(state.dates);
-    return myFetch('/api/datesForDisplay').then((dates) => {
+    return doGet('/api/datesForDisplay').then((dates) => {
       state.dates = dates;
       resolve(state.dates);
     });
@@ -67,19 +50,13 @@ export default {
 
   indicators: () => new Promise((resolve) => {
     if (state.indicators) return resolve(state.indicators);
-    return myFetch('/api/indicators').then((indicators) => {
+    return doGet('/api/indicators').then((indicators) => {
       state.indicators = indicators;
       resolve(state.indicators);
     });
   }),
 
-  notesDelete: patientId => new Promise(resolve => setTimeout(() => {
-    data.noteDelete(patientId);
-    resolve();
-  }, Math.random() * 500)),
+  notesDelete: patientId => doDelete(`/api/note/${patientId}`),
 
-  notesUpsert: (patientId, note) => new Promise(resolve => setTimeout(() => {
-    data.upsertNote(patientId, note);
-    resolve();
-  }, Math.random() * 500)),
+  notesUpsert: note => doPost('/api/note', note),
 };

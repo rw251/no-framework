@@ -3,7 +3,7 @@ const DateModel = require('../models/Date'); // Can't call it Date
 const shortMonthLookup = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const longMonthLookup = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-const getAllDates = () => DateModel.find().sort('-_id').lean().exec();
+const getAllDates = () => DateModel.find().sort('_id').lean().exec();
 
 const prepareDatesForDisplay = (dates) => {
   // We only want to keep today, yesterday, last week, last month (30 days),

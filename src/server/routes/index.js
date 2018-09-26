@@ -39,8 +39,12 @@ router.get('/patients/:practiceId/:dateId/:comparisonDateId/:indicatorId/:report
 router.get('/patients/:practiceId/multiple/on/:dateId', isAuthenticated, apiController.getMultiplePatientData);
 
 router.get('/indicator/all/summaryfordate/:dateId', isAuthenticated, apiController.getAllIndicatorData);
+router.get('/indicator/all/summaryfordate/:dateId/export', isAuthenticated, apiController.exportCcgAllIndicatorData);
 router.get('/indicator/:indicatorId/summaryfordate/:dateId/comparedWith/:comparisonDateId', isAuthenticated, apiController.getSingleIndicatorData);
+router.get('/indicator/:indicatorId/summaryfordate/:dateId/comparedWith/:comparisonDateId/export', isAuthenticated, apiController.exportCcgSingleIndicatorData);
 
+router.post('/note', isAuthenticated, apiController.updatePatientNote);
+router.delete('/note/:patientId', isAuthenticated, apiController.deletePatientNote);
 
 /* GET home page. */
 router.get('/', (req, res) => {

@@ -56,6 +56,7 @@ export default (callback, practiceId, dateId) => {
 
         const patientLookup = {};
         patients.forEach((p) => {
+          if (!p.indicatorNotes) p.indicatorNotes = [];
           p.indicatorNotesToDisplay = p.indicatorNotes.filter(note => p.indicators.filter(indicator => indicator.id === note.id).length > 0);
           p.isNote = !!p.patientNote || p.indicatorNotesToDisplay.length > 0;
           p.indicators.forEach((indicator) => {

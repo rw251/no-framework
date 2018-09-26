@@ -242,7 +242,7 @@ export default (callback, practiceId, dateId, comparisonDateId, tabId, chartId) 
           const $exportButton = $('#export');
 
           $exportButton.on('click', () => {
-            window.location = '/static/test.csv';
+            window.location = `/api/practice/${state.practiceId}/summaryfordate/${state.dateId}/comparedWith/${state.comparisonDateId}/export`;
           });
 
           $('#tableTab').on('hidden.bs.tab', () => {
