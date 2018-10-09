@@ -1,5 +1,7 @@
-import Template from 'rw-templater';
 import state from '../state';
+import api from '../api';
+import { updateActive } from './common';
+import homeCmpnt from '../components/home';
 
 export default (callback) => {
   // always start a progress bar if there is any async
@@ -8,19 +10,15 @@ export default (callback) => {
   state.latestPageRequestId = Math.random();
   const localPageRequestId = state.latestPageRequestId;
 
-  setTimeout(() => {
+  api.getHome().then((data) => {
     if (state.latestPageRequestId === localPageRequestId) {
       window.Progress.done();
-      document.querySelector('a.active').classList.remove('active');
-      document.querySelector('#nav-tab-1').classList.add('active');
 
-      document.getElementById('main').innerHTML = Template.it('home');
+      updateActive('nav-tab-1');
 
-      // OR DO IT ALL WITH STRING LITERALS
-      //
-      document.getElementById('main').innerHTML = '<p>Home page.</p>';
+      document.getElementById('main').innerHTML = homeCmpnt(data);
     }
 
     if (callback) callback();
-  }, 1500);
+  });
 };
